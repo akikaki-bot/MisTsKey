@@ -1,65 +1,62 @@
-import { User } from "./user"
-
+import { User } from "./user";
 export interface Message {
-    type : "channel",
-    body : MessageBody
+    type: "channel";
+    body: MessageBody;
 }
 /**
  * # MessageBody
- * 
+ *
  *  メッセージデータです。
- * 
+ *
  */
 export interface MessageBody {
-    id : string
-    type : string
-    body : Note
+    id: string;
+    type: string;
+    body: Note;
     /** @deprecated Will be deleted */
-    IsRenoteMessage : boolean
+    IsRenoteMessage: boolean;
 }
-
 /**
  * # Note
- * 
+ *
  * ノート型。
- * 
+ *
  * いろんなところに使われてるよ。
- * 
+ *
  * More Info : [Misskey Hub](https://misskey-hub.net/docs/api/entity/note.html)
- * 
+ *
  * ※拡張済み
  */
 export interface Note {
-    BodyId : string
-    IsRenoteMessage : boolean
-    id : string
-    createdAt : ISO8601
-    userId : string
-    user : User
+    BodyId: string;
+    IsRenoteMessage: boolean;
+    id: string;
+    createdAt: ISO8601;
+    userId: string;
+    user: User;
     /**
      * # Notice
-     * textはRenoteなど本文がない場合に `null` になります。 
+     * textはRenoteなど本文がない場合に `null` になります。
      */
-    text : string | null
-    cw : string | null
-    visibility : Visibility
-    localOnly : boolean
-    renoteCount : number
-    repliesCount : number
-    reactions : object
-    reactionEmojis : object
-    emojis : object
-    tags : Array<any>
-    fileIds : Array<string>,
-    files : Array<any>,
-    replyId : any
-    renoteId : any,
-    mentions : Array<any>
-    uri : string
+    text: string | null;
+    cw: string | null;
+    visibility: Visibility;
+    localOnly: boolean;
+    renoteCount: number;
+    repliesCount: number;
+    reactions: object;
+    reactionEmojis: object;
+    emojis: object;
+    tags: Array<any>;
+    fileIds: Array<string>;
+    files: Array<any>;
+    replyId: any;
+    renoteId: any;
+    mentions: Array<any>;
+    uri: string;
 }
-export type Visibility = "public" | "home" | "followers" | "specified"
-export type ISO8601 = string
-
+export type Visibility = "public" | "home" | "followers" | "specified";
+export type ISO8601 = string;
 /**
  * {
   type: 'channel',
@@ -107,4 +104,4 @@ export type ISO8601 = string
     }
   }
 }
- */
+ */ 

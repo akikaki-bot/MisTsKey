@@ -11,14 +11,18 @@ import { HelloWorld } from "./components/helloworld";
 import { createUuid } from "./utils/createUUID";
 import { TimeLineMessage } from "./components/timelineMessage";
 import { GoodbyWorld } from "./components/goodbyworld";
+import { GETPOST, POST } from "./posts/post";
+import { AccessToken } from "./types/reaction";
+import { Self } from "./components/self";
 
 export class Client extends BaseClient {
 
     cache : Cache<string, any>
     private ws : WebSocket
-    private host : string = "wss://misskey.io"
+    private host : string = "misskey.io"
     private id : string 
     private accessToken : string
+    public i : Self
 
     constructor(        
         /**
@@ -46,7 +50,7 @@ export class Client extends BaseClient {
              * 
              * - Default
              * 
-             * デフォルトでは wss://misskey.ioです。
+             * デフォルトでは misskey.ioです。
              *  
              * ## 注意 
              * 
@@ -56,7 +60,7 @@ export class Client extends BaseClient {
              * 
              * ```js
              * MoreOption : {
-             *    host : "wss://misskey.io"
+             *    host : "misskey.io"
              * }
              * ```
              */
@@ -112,6 +116,12 @@ export class Client extends BaseClient {
         this.accessToken = this.token
     }
 
+    private async InitSelfUser() {
+       const self = await GETPOST<AccessToken, any>(`https://${this.host}/api/i`, {i : this.token})
+       this.i = new Self(self.data, this)
+       this.emit('ready', () => {})
+    }
+
     /**
      * # Login
      * -> Method
@@ -122,10 +132,11 @@ export class Client extends BaseClient {
     login() {
         this.emit('debug', "[Streaming / Connecting] => "+this.host+" / token : "+this.token)
         this._AccessTokenGetter()
-        this.ws = new WebSocket(`${this.host}/streaming?i=${this.token}`)
+        this.ws = new WebSocket(`wss://${this.host}/streaming?i=${this.token}`)
 
         this.ws.onopen = () => {
             this.__sendHelloWorld()
+            this.InitSelfUser()
         }
 
         this.ws.onmessage = ( msg : any ) => {
@@ -141,6 +152,7 @@ export class Client extends BaseClient {
 
 
 export declare interface Client {
-    on(event :'debug', listener: ( data: string ) => void): this
+    on(event : 'debug', listener: ( data: string ) => void): this
     on(event : "timelineCreate", listener : (data : TimeLineMessage) => void) : this
+    on(event : "ready", listener: () => void) : this
 }

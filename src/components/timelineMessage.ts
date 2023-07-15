@@ -23,7 +23,7 @@ export class TimeLineMessage {
      * 
      * このメッセージをRenoteします。
      */
-    set setRenote( nube : string ) {
+    renote() {
 
     }
 
