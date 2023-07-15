@@ -1,0 +1,10 @@
+{
+    "compilerOptions": {
+        "target": "ES6",
+        "module": "Node16",
+        "types": ["node"],
+        "moduleResolution": "node",
+        "resolveJsonModule": true,
+        "outDir": "./build"
+    },
+  }
