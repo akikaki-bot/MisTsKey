@@ -2,7 +2,6 @@
 // API WRAPPER 
 // :) Misskey.ts
 //
-// Made from JAPAN
 // I Love Misskey <3
 
 import WebSocket from "ws";
@@ -12,7 +11,6 @@ import { HelloWorld } from "./components/helloworld";
 import { createUuid } from "./utils/createUUID";
 import { TimeLineMessage } from "./components/timelineMessage";
 import { GoodbyWorld } from "./components/goodbyworld";
-import { POST } from "./posts/post";
 
 export class Client extends BaseClient {
 
