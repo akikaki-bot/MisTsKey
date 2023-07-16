@@ -6,14 +6,17 @@ import { Message, Note } from "./message";
 
 export class TimeLineMessage {
     
+    /**
+     * ## message
+     * 
+     * メッセージ（Note）についてのやつ
+     */
     public message : Note
     private client : Client 
 
     constructor(data : Message, client : Client) {
-        //super(client.token, client.channelType)
-
         this.client = client
-        this.message = data.body.body
+        this.message = new Note(data.body.body, client)
         this.message.BodyId = data.body.id
         this.message.text === null ? this.message.IsRenoteMessage = true : this.message.IsRenoteMessage = false
     }
@@ -24,7 +27,7 @@ export class TimeLineMessage {
      * このメッセージをRenoteします。
      */
     renote() {
-
+        
     }
 
     /**
@@ -42,7 +45,7 @@ export class TimeLineMessage {
      */
     async getRenote( noteId ?: string , limit ?: number , sinceId ?: string , untilId ?: string ) {
         const NoteId = noteId ? noteId : this.message.id
-        const data = await GETPOST<GlobalNoteIdParam & Partial<GetRenote> & AccessToken , Array<Note>>("https://misskey.io/api/notes/renotes", {
+        const data = await GETPOST<GlobalNoteIdParam & Partial<GetRenote> & AccessToken , Array<Note>>(`https://${this.client.getHost}api/notes/renotes`, {
             i : this.client.token , 
             noteId : NoteId,
             limit : limit,
@@ -65,7 +68,7 @@ export class TimeLineMessage {
         const NoteId = this.message.id
         await POST<GlobalNoteIdParam & AccessToken>("https://misskey.io/api/pages/like", {i : this.client.token , noteId : NoteId})
         .catch(() => {
-            throw new Error('[Misskey.ts API Error]\n 自分自身のノートにLikeしようとしていませんか？')
+            throw new Error('[Misskey.ts API Error]\n Like出来ませんでした。自分のノートなのかもしれません。')
         })
     }
 
@@ -79,7 +82,7 @@ export class TimeLineMessage {
         const NoteId = this.message.id
         await POST<GlobalNoteIdParam & AccessToken>("https://misskey.io/api/pages/unlike", {i : this.client.token , noteId : NoteId})
         .catch(() => {
-            throw new Error('[Misskey.ts API Error]\n 自分自身のノートにunLikeしようとしていませんか？')
+            throw new Error('[Misskey.ts API Error]\n unLike出来ませんでした。自分のノートなのかもしれません。')
         })
     }
 
@@ -96,7 +99,7 @@ export class TimeLineMessage {
         const NoteId = this.message.id
         await POST<
         Reaction & AccessToken
-        >("https://misskey.io/api/notes/reactions/create",
+        >(`https://${this.client.getHost}/api/notes/reactions/create`,
             {
                 i : this.client.token , 
                 noteId : NoteId , 
@@ -117,7 +120,7 @@ export class TimeLineMessage {
         const NoteId = this.message.id
         await POST<
         DeleteReaction & AccessToken
-        >("https://misskey.io/api/notes/reactions/delete",
+        >(`https://${this.client.getHost}/api/notes/reactions/delete`,
             {
                 i : this.client.token , 
                 noteId : NoteId , 

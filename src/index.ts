@@ -11,7 +11,7 @@ import { HelloWorld } from "./components/helloworld";
 import { createUuid } from "./utils/createUUID";
 import { TimeLineMessage } from "./components/timelineMessage";
 import { GoodbyWorld } from "./components/goodbyworld";
-import { GETPOST, POST } from "./posts/post";
+import { GETPOST } from "./posts/post";
 import { AccessToken } from "./types/reaction";
 import { Self } from "./components/self";
 
@@ -75,6 +75,10 @@ export class Client extends BaseClient {
         : void 0
 
         this.id = createUuid()
+    }
+
+    get getHost() {
+        return this.host
     }
 
     private __sendHelloWorld() {
@@ -141,9 +145,11 @@ export class Client extends BaseClient {
 
         this.ws.onmessage = ( msg : any ) => {
             const message = JSON.parse(msg.data)
+            const MessageClass = new TimeLineMessage(message, this)
+            if(typeof MessageClass.message.text !== "string") return;
 
-            this.emit("timelineCreate", new TimeLineMessage(message, this))
-            typeof message.body !== "undefined" ? this.cache.set(new TimeLineMessage(message, this).message.id, new TimeLineMessage(message, this)) : void 0
+            this.emit("timelineCreate", MessageClass)
+            typeof message.body !== "undefined" ? this.cache.set(MessageClass.message.id, MessageClass) : void 0
         }
     }
 

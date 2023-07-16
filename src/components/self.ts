@@ -1,8 +1,20 @@
 import { Client } from "..";
+import { GETPOST } from "../posts/post";
 import { Achievement, BadgeRole, Emojis, MeDetailed, Policies, Role } from "../types/me";
+import { NoteBody } from "../types/note";
+import { AccessToken } from "../types/reaction";
+import { Note, Visibility } from "./message";
 
 
-
+/**
+ * ## Self
+ * -> implements MeDetailed
+ * 
+ * ############################
+ * 
+ * ユーザー、どちらかと言えば詳細な自分の情報。
+ * 
+ */
 export class Self implements MeDetailed {
     id:                              string;
     name:                            string | null;
@@ -150,5 +162,38 @@ export class Self implements MeDetailed {
         this.achievements = user.achievements
         this.loggedInDays = user.loggedInDays
         this.policies = user.policies
+    }
+
+    async note( text : string | null , configs ?: Partial<{
+        visibility : Visibility,
+        visibleUserIds : Array<string>,
+        cw : string | null,
+        localOnly : boolean
+        noExtractMentions : boolean
+        noExtractHashtags : boolean
+        noExtractEmojis : boolean
+        fileIds : Array<string>
+        mediaIds : Array<string>
+        replyId : string 
+        renoteId : string
+        channelId : string
+        /**
+         * # POLL
+         * 
+         * See : [Misskey-hub](https://misskey-hub.net/docs/api/endpoints/notes/create.html)
+         */
+        poll : {
+            choices : Array<string>
+            multiple : boolean
+            expiresAt : number
+            expiredAfter : number
+        }
+    }>) { 
+        const Response = await GETPOST<Partial<NoteBody> & AccessToken, Note>(
+            `https://${this.client.getHost}/api/notes/create`,
+            Object.assign(configs, { text : text }, {i : this.client.token})
+        )
+
+        return Response.data
     }
 }
