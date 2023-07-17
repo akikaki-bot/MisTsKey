@@ -1,4 +1,4 @@
-import { ChannelType } from "./base";
+import { ChannelType } from "../components/base";
 
 export interface HelloWorld {
     type : "connect"

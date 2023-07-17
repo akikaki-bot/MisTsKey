@@ -6,11 +6,11 @@
 
 import WebSocket from "ws";
 import { BaseClient, ChannelType } from "./components/base";
-import { Cache } from "./components/cache";
-import { HelloWorld } from "./components/helloworld";
+import { Cache } from "./types/cache";
+import { HelloWorld } from "./types/helloworld";
 import { createUuid } from "./utils/createUUID";
 import { TimeLineMessage } from "./components/timelineMessage";
-import { GoodbyWorld } from "./components/goodbyworld";
+import { GoodbyWorld } from "./types/goodbyworld";
 import { GETPOST } from "./posts/post";
 import { AccessToken } from "./types/reaction";
 import { Self } from "./components/self";
@@ -19,7 +19,17 @@ import { MeDetailed } from "./types/me";
 
 /**
  * # Client
- * -> extends BaseClient
+ * 
+ * ---
+ * 
+ * extends BaseClient
+ * 
+ * ---
+ * 
+ * みすてぃきーへようこそ！
+ * 
+ * Welcome to MisTsKey!
+ * 
  * 
  * @example
  * 

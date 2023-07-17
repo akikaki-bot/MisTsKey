@@ -10,7 +10,7 @@ import { Note, Visibility } from "./message";
  * ## Self
  * -> implements MeDetailed
  * 
- * ############################
+ * ---
  * 
  * ユーザー、どちらかと言えば詳細な自分の情報。
  * 

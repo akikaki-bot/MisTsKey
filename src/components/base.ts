@@ -1,5 +1,18 @@
 import { EventEmitter } from "node:events"
 
+
+/**
+ * # BaseClient
+ * 
+ * ---
+ * 
+ * extends EventEmitter
+ * 
+ * ---
+ * 
+ * みすてぃきーのベース！だよ！
+ */
+
 export class BaseClient extends EventEmitter {
     public token : string
     public channelType : ChannelType
