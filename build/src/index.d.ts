@@ -2,13 +2,33 @@ import { BaseClient, ChannelType } from "./components/base";
 import { Cache } from "./components/cache";
 import { TimeLineMessage } from "./components/timelineMessage";
 import { Self } from "./components/self";
+/**
+ * # Client
+ * -> extends BaseClient
+ *
+ * @example
+ *
+ * ```ts
+ * const client = new Client("AccessToken","homeTimeline")
+ *
+ * client.on('ready' , () => {
+ *    console.log(`Loggined in ${client.i.username}`)
+ * })
+ * ```
+ */
 export declare class Client extends BaseClient {
-    cache: Cache<string, any>;
     private ws;
     private host;
     private id;
     private accessToken;
+    /**
+     * # i
+     *
+     * 自分自身（アクセストークンユーザー）についてのオブジェクトです。
+     *
+     */
     i: Self;
+    cache: Cache<string, any>;
     constructor(
     /**
     * ## token
@@ -39,9 +59,7 @@ export declare class Client extends BaseClient {
          *
          * ## 注意
          *
-         * wss://{host} のような形式で入力してください。
-         *
-         * 例 : misskey.ioに設定する場合
+         * 例 : ホストをmisskey.ioに設定する場合
          *
          * ```js
          * MoreOption : {
@@ -51,6 +69,7 @@ export declare class Client extends BaseClient {
          */
         host?: string;
     });
+    get getHost(): string;
     private __sendHelloWorld;
     destory(): void;
     getAccessToken(): string;

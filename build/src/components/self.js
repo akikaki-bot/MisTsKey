@@ -1,6 +1,25 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Self = void 0;
+const post_1 = require("../posts/post");
+/**
+ * ## Self
+ * -> implements MeDetailed
+ *
+ * ############################
+ *
+ * ユーザー、どちらかと言えば詳細な自分の情報。
+ *
+ */
 class Self {
     constructor(user, client) {
         this.client = client;
@@ -75,6 +94,12 @@ class Self {
         this.achievements = user.achievements;
         this.loggedInDays = user.loggedInDays;
         this.policies = user.policies;
+    }
+    note(text, configs) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const Response = yield (0, post_1.GETPOST)(`https://${this.client.getHost}/api/notes/create`, Object.assign(configs, { text: text }, { i: this.client.token }));
+            return Response.data;
+        });
     }
 }
 exports.Self = Self;

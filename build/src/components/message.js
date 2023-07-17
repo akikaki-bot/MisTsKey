@@ -1,50 +1,78 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * {
-  type: 'channel',
-  body: {
-    id: 'b27875cf-2469-4d46-be57-feb9c117525a',
-    type: 'note',
-    body: {
-      id: '9h7018wgue',
-      createdAt: '2023-07-15T03:14:58.000Z',
-      userId: '8ulsskzrwd',
-      user: [Object],
-      text: 'Por encima de su cadáver\n' +
-        '\n' +
-        'Por Bob Torres\n' +
-        '\n' +
-        'Anarquista.\n' +
-        '\n' +
-        'Sinopsis\n' +
-        'Sugiere a la gente de izquierdas que la cuestión de los animales debería ser incluida entre las luchas por la liberación y, una vez que dejen de reírse, verás que casualmente no te toman en serio. Con un enfoque basado en el trabajo, la propiedad y la “vida” de las mercancías, Por encima de su cadáver pretende dar claves para entender la profunda naturaleza de la dominación, el poder y la jerarquía, explorando las intersecciones entre las opresiones humana y animal y su relación con las dinámicas de explotación propias del capitalismo. Combinando como tuercas y tornillos la economía política marxista, una visión anarquista pluralista y un \n' +
-        '\n' +
-        '#Govegan \n' +
-        '#veganism \n' +
-        '#veganismo \n' +
-        '#izquierda \n' +
-        '#marxismo \n' +
-        '\n' +
-        '@vegan@a.gup.pe \n' +
-        '1/2',
-      cw: null,
-      visibility: 'public',
-      localOnly: false,
-      renoteCount: 0,
-      repliesCount: 0,
-      reactions: {},
-      reactionEmojis: {},
-      emojis: {},
-      tags: [Array],
-      fileIds: [],
-      files: [],
-      replyId: null,
-      renoteId: null,
-      mentions: [Array],
-      uri: 'https://social.politicaconciencia.org/users/SofiaK/statuses/110715921930636829',
-      url: 'https://social.politicaconciencia.org/@SofiaK/110715921930636829'
+exports.Note = void 0;
+const post_1 = require("../posts/post");
+const user_1 = require("./user");
+class Note {
+    constructor(note, client) {
+        this.BodyId = note.BodyId;
+        this.IsRenoteMessage = note.IsRenoteMessage;
+        this.id = note.id;
+        this.createdAt = note.createdAt;
+        this.userId = note.userId;
+        this.user = new user_1.MisskeyUser(note.user, client);
+        this.text = note.text;
+        this.cw = note.cw;
+        this.visibility = note.visibility;
+        this.localOnly = note.localOnly;
+        this.renoteCount = note.renoteCount;
+        this.repliesCount = note.repliesCount;
+        this.reactions = note.reactions;
+        this.reactionEmojis = note.reactionEmojis;
+        this.emojis = note.emojis;
+        this.tags = note.tags;
+        this.fileIds = note.fileIds;
+        this.files = note.files;
+        this.replyId = note.replyId;
+        this.renoteId = note.renoteId;
+        this.mentions = note.mentions;
+        this.uri = note.uri;
+        this.url = note.url;
+        this.client = client;
     }
-  }
+    /**
+     * # Reply
+     *
+     * このノートにリプライをします。
+     *
+     * Config.ReplyIdは勝手に補充されるので、値を変更する必要はありません。
+     * @param {string | null} text
+     * @param configs
+     * @returns {Promise<Note>}
+     *
+     *
+     * @example
+     * ```ts
+     * await someMessage.reply('Reply Message', { visibility : "home" })
+     * ```
+     */
+    reply(text, configs) {
+        return __awaiter(this, void 0, void 0, function* () {
+            configs.replyId = this.id;
+            const Response = yield (0, post_1.GETPOST)(`https://${this.client.getHost}/api/notes/create`, Object.assign(configs, { text: text }, { i: this.client.token }));
+            return Response.data;
+        });
+    }
+    /**
+     * # Delete
+     *
+     * このノートを消去します。
+     */
+    delete() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield (0, post_1.POST)(`https://${this.client.getHost}/api/notes/delete`, { i: this.client.token, noteId: this.id }).catch(() => {
+                throw new Error('[Misskey.ts API Error] \n 削除できませんでした。');
+            });
+        });
+    }
 }
- */ 
+exports.Note = Note;

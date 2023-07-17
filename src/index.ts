@@ -1,6 +1,6 @@
 //
 // API WRAPPER 
-// :) Misskey.ts
+// :) MisTsKey
 //
 // I Love Misskey <3
 
@@ -14,15 +14,38 @@ import { GoodbyWorld } from "./components/goodbyworld";
 import { GETPOST } from "./posts/post";
 import { AccessToken } from "./types/reaction";
 import { Self } from "./components/self";
+import { Note } from "./components/message";
+import { MeDetailed } from "./types/me";
 
+/**
+ * # Client
+ * -> extends BaseClient
+ * 
+ * @example
+ * 
+ * ```ts
+ * const client = new Client("AccessToken","homeTimeline")
+ * 
+ * client.on('ready' , () => {
+ *    console.log(`Loggined in ${client.i.username}`)
+ * })
+ * ```
+ */
 export class Client extends BaseClient {
 
-    cache : Cache<string, any>
     private ws : WebSocket
     private host : string = "misskey.io"
     private id : string 
     private accessToken : string
+    /**
+     * # i
+     * 
+     * 自分自身（アクセストークンユーザー）についてのオブジェクトです。
+     * 
+     */
     public i : Self
+    public cache : Cache<string, any>
+
 
     constructor(        
         /**
@@ -54,9 +77,7 @@ export class Client extends BaseClient {
              *  
              * ## 注意 
              * 
-             * wss://{host} のような形式で入力してください。
-             * 
-             * 例 : misskey.ioに設定する場合
+             * 例 : ホストをmisskey.ioに設定する場合
              * 
              * ```js
              * MoreOption : {
@@ -69,7 +90,7 @@ export class Client extends BaseClient {
     ) {
         super(token, channelType)
 
-        this.cache = new Cache<string, any>()
+        this.cache = new Cache<string, Note>()
         typeof MoreOption !== "undefined" && typeof MoreOption.host !== "undefined" 
         ? this.host = MoreOption.host
         : void 0
@@ -121,7 +142,9 @@ export class Client extends BaseClient {
     }
 
     private async InitSelfUser() {
-       const self = await GETPOST<AccessToken, any>(`https://${this.host}/api/i`, {i : this.token})
+        this.emit('debug', "[API / Getting] Client User [HOST] => "+this.host+" / token : "+this.token)
+
+       const self = await GETPOST<AccessToken, MeDetailed>(`https://${this.host}/api/i`, {i : this.token})
        this.i = new Self(self.data, this)
        this.emit('ready', () => {})
     }
@@ -139,6 +162,7 @@ export class Client extends BaseClient {
         this.ws = new WebSocket(`wss://${this.host}/streaming?i=${this.token}`)
 
         this.ws.onopen = () => {
+            this.emit('debug', `[Streaming / Successfully] => ${this.host} / Successfully connect!`)
             this.__sendHelloWorld()
             this.InitSelfUser()
         }

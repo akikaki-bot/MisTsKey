@@ -67,10 +67,26 @@ export type ISO8601 = string
 
 export class Note implements BaseNote {
     BodyId : string
+    /**
+     * # IsRenoteMessage
+     * 
+     * これはリノートであるかのBooleanです。
+     */
     IsRenoteMessage : boolean
+    /**
+     * # id
+     * 
+     * メッセージIDです。
+     *
+     */
     id : string
     createdAt : ISO8601
     userId : string
+    /**
+     * # user
+     * 
+     * このノートのユーザーについてのオブジェクトです。
+     */
     user : MisskeyUser
     /**
      * # Notice
@@ -129,9 +145,15 @@ export class Note implements BaseNote {
      * このノートにリプライをします。
      * 
      * Config.ReplyIdは勝手に補充されるので、値を変更する必要はありません。
-     * @param text 
+     * @param {string | null} text 
      * @param configs 
-     * @returns 
+     * @returns {Promise<Note>}
+     * 
+     * 
+     * @example
+     * ```ts
+     * await someMessage.reply('Reply Message', { visibility : "home" })
+     * ```
      */
     async reply( text : string | null , configs ?: Partial<{
       visibility : Visibility,

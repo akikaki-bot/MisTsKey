@@ -21,10 +21,14 @@ export class TimeLineMessage {
         this.message.text === null ? this.message.IsRenoteMessage = true : this.message.IsRenoteMessage = false
     }
 
+
+    //TODO: 実装
     /**
      * # Renote
      * 
      * このメッセージをRenoteします。
+     * 
+     * @todo
      */
     renote() {
         
@@ -66,7 +70,7 @@ export class TimeLineMessage {
      */
     async like() {
         const NoteId = this.message.id
-        await POST<GlobalNoteIdParam & AccessToken>("https://misskey.io/api/pages/like", {i : this.client.token , noteId : NoteId})
+        await POST<GlobalNoteIdParam & AccessToken>(`https://${this.client.getHost}/api/pages/like`, {i : this.client.token , noteId : NoteId})
         .catch(() => {
             throw new Error('[Misskey.ts API Error]\n Like出来ませんでした。自分のノートなのかもしれません。')
         })
@@ -80,7 +84,7 @@ export class TimeLineMessage {
      */
     async Unlike() {
         const NoteId = this.message.id
-        await POST<GlobalNoteIdParam & AccessToken>("https://misskey.io/api/pages/unlike", {i : this.client.token , noteId : NoteId})
+        await POST<GlobalNoteIdParam & AccessToken>(`https://${this.client.getHost}/api/pages/unlike`, {i : this.client.token , noteId : NoteId})
         .catch(() => {
             throw new Error('[Misskey.ts API Error]\n unLike出来ませんでした。自分のノートなのかもしれません。')
         })

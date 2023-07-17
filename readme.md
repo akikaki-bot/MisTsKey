@@ -1,6 +1,6 @@
-# Misskey.ts
+# MisTsKey
 
-Misskey.io等、MisskeyAPI専用APIラッパーです。
+Misskey.io等、Misskey系統SNS API専用APIラッパーです。
 
 ## Install
 
@@ -17,12 +17,12 @@ const client = new Client("Your Access Token", "globalTimeline")
 client.on('ready', () => {
     console.log("Logined at : "+client.i.username)
 
-    client.i.note('TypeScript製 Misskey.ts が産声を上げたぞ！')
+    client.i.note('MisTsKeyでBotが産声を上げたぞ！')
 })
 
 client.on('timelineCreate', (message) => {
 
-    if(message.message.text.match(/!misskeyTSBot/)){
+    if(message.message.text.match(/!MisTsKey/)){
         message.message.reply('やっはろー！')
     }
 

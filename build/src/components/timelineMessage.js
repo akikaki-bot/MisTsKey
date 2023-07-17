@@ -11,18 +11,21 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TimeLineMessage = void 0;
 const post_1 = require("../posts/post");
+const message_1 = require("./message");
 class TimeLineMessage {
     constructor(data, client) {
-        //super(client.token, client.channelType)
         this.client = client;
-        this.message = data.body.body;
+        this.message = new message_1.Note(data.body.body, client);
         this.message.BodyId = data.body.id;
         this.message.text === null ? this.message.IsRenoteMessage = true : this.message.IsRenoteMessage = false;
     }
+    //TODO: 実装
     /**
      * # Renote
      *
      * このメッセージをRenoteします。
+     *
+     * @todo
      */
     renote() {
     }
@@ -42,7 +45,7 @@ class TimeLineMessage {
     getRenote(noteId, limit, sinceId, untilId) {
         return __awaiter(this, void 0, void 0, function* () {
             const NoteId = noteId ? noteId : this.message.id;
-            const data = yield (0, post_1.GETPOST)("https://misskey.io/api/notes/renotes", {
+            const data = yield (0, post_1.GETPOST)(`https://${this.client.getHost}api/notes/renotes`, {
                 i: this.client.token,
                 noteId: NoteId,
                 limit: limit,
@@ -63,9 +66,9 @@ class TimeLineMessage {
     like() {
         return __awaiter(this, void 0, void 0, function* () {
             const NoteId = this.message.id;
-            yield (0, post_1.POST)("https://misskey.io/api/pages/like", { i: this.client.token, noteId: NoteId })
+            yield (0, post_1.POST)(`https://${this.client.getHost}/api/pages/like`, { i: this.client.token, noteId: NoteId })
                 .catch(() => {
-                throw new Error('[Misskey.ts API Error]\n 自分自身のノートにLikeしようとしていませんか？');
+                throw new Error('[Misskey.ts API Error]\n Like出来ませんでした。自分のノートなのかもしれません。');
             });
         });
     }
@@ -77,9 +80,9 @@ class TimeLineMessage {
     Unlike() {
         return __awaiter(this, void 0, void 0, function* () {
             const NoteId = this.message.id;
-            yield (0, post_1.POST)("https://misskey.io/api/pages/unlike", { i: this.client.token, noteId: NoteId })
+            yield (0, post_1.POST)(`https://${this.client.getHost}/api/pages/unlike`, { i: this.client.token, noteId: NoteId })
                 .catch(() => {
-                throw new Error('[Misskey.ts API Error]\n 自分自身のノートにunLikeしようとしていませんか？');
+                throw new Error('[Misskey.ts API Error]\n unLike出来ませんでした。自分のノートなのかもしれません。');
             });
         });
     }
@@ -94,7 +97,7 @@ class TimeLineMessage {
     reaction(reactionEmoji) {
         return __awaiter(this, void 0, void 0, function* () {
             const NoteId = this.message.id;
-            yield (0, post_1.POST)("https://misskey.io/api/notes/reactions/create", {
+            yield (0, post_1.POST)(`https://${this.client.getHost}/api/notes/reactions/create`, {
                 i: this.client.token,
                 noteId: NoteId,
                 reaction: reactionEmoji
@@ -112,7 +115,7 @@ class TimeLineMessage {
     reactionDelete() {
         return __awaiter(this, void 0, void 0, function* () {
             const NoteId = this.message.id;
-            yield (0, post_1.POST)("https://misskey.io/api/notes/reactions/delete", {
+            yield (0, post_1.POST)(`https://${this.client.getHost}/api/notes/reactions/delete`, {
                 i: this.client.token,
                 noteId: NoteId,
             });

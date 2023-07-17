@@ -1,5 +1,5 @@
 {
-  "name": "misskey.ts",
+  "name": "mistskey",
   "version": "0.0.1",
   "description": "A api Wrapper for misskey ",
   "main": "src/index.ts",
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "misskey.ts"
+    "url": "MisTsKey"
   },
   "keywords": [
     "misskey"

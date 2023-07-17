@@ -1,5 +1,15 @@
 import { Client } from "..";
 import { Achievement, BadgeRole, Emojis, MeDetailed, Policies, Role } from "../types/me";
+import { Note, Visibility } from "./message";
+/**
+ * ## Self
+ * -> implements MeDetailed
+ *
+ * ############################
+ *
+ * ユーザー、どちらかと言えば詳細な自分の情報。
+ *
+ */
 export declare class Self implements MeDetailed {
     id: string;
     name: string | null;
@@ -74,4 +84,29 @@ export declare class Self implements MeDetailed {
     policies: Policies;
     private client;
     constructor(user: MeDetailed, client?: Client);
+    note(text: string | null, configs?: Partial<{
+        visibility: Visibility;
+        visibleUserIds: Array<string>;
+        cw: string | null;
+        localOnly: boolean;
+        noExtractMentions: boolean;
+        noExtractHashtags: boolean;
+        noExtractEmojis: boolean;
+        fileIds: Array<string>;
+        mediaIds: Array<string>;
+        replyId: string;
+        renoteId: string;
+        channelId: string;
+        /**
+         * # POLL
+         *
+         * See : [Misskey-hub](https://misskey-hub.net/docs/api/endpoints/notes/create.html)
+         */
+        poll: {
+            choices: Array<string>;
+            multiple: boolean;
+            expiresAt: number;
+            expiredAfter: number;
+        };
+    }>): Promise<Note>;
 }

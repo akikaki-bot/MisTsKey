@@ -1,6 +1,11 @@
 import { Client } from "..";
 import { Message, Note } from "./message";
 export declare class TimeLineMessage {
+    /**
+     * ## message
+     *
+     * メッセージ（Note）についてのやつ
+     */
     message: Note;
     private client;
     constructor(data: Message, client: Client);
@@ -8,6 +13,8 @@ export declare class TimeLineMessage {
      * # Renote
      *
      * このメッセージをRenoteします。
+     *
+     * @todo
      */
     renote(): void;
     /**

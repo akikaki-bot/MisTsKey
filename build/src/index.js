@@ -1,7 +1,7 @@
 "use strict";
 //
 // API WRAPPER 
-// :) Misskey.ts
+// :) MisTsKey
 //
 // I Love Misskey <3
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
@@ -25,6 +25,20 @@ const createUUID_1 = require("./utils/createUUID");
 const timelineMessage_1 = require("./components/timelineMessage");
 const post_1 = require("./posts/post");
 const self_1 = require("./components/self");
+/**
+ * # Client
+ * -> extends BaseClient
+ *
+ * @example
+ *
+ * ```ts
+ * const client = new Client("AccessToken","homeTimeline")
+ *
+ * client.on('ready' , () => {
+ *    console.log(`Loggined in ${client.i.username}`)
+ * })
+ * ```
+ */
 class Client extends base_1.BaseClient {
     constructor(
     /**
@@ -52,6 +66,9 @@ class Client extends base_1.BaseClient {
             ? this.host = MoreOption.host
             : void 0;
         this.id = (0, createUUID_1.createUuid)();
+    }
+    get getHost() {
+        return this.host;
     }
     __sendHelloWorld() {
         this.emit('debug', "[Streaming / SendHelloWorld] => " + this.host + " / token : " + this.token);
@@ -84,6 +101,7 @@ class Client extends base_1.BaseClient {
     }
     InitSelfUser() {
         return __awaiter(this, void 0, void 0, function* () {
+            this.emit('debug', "[API / Getting] Client User [HOST] => " + this.host + " / token : " + this.token);
             const self = yield (0, post_1.GETPOST)(`https://${this.host}/api/i`, { i: this.token });
             this.i = new self_1.Self(self.data, this);
             this.emit('ready', () => { });
@@ -101,13 +119,17 @@ class Client extends base_1.BaseClient {
         this._AccessTokenGetter();
         this.ws = new ws_1.default(`wss://${this.host}/streaming?i=${this.token}`);
         this.ws.onopen = () => {
+            this.emit('debug', `[Streaming / Successfully] => ${this.host} / Successfully connect!`);
             this.__sendHelloWorld();
             this.InitSelfUser();
         };
         this.ws.onmessage = (msg) => {
             const message = JSON.parse(msg.data);
-            this.emit("timelineCreate", new timelineMessage_1.TimeLineMessage(message, this));
-            typeof message.body !== "undefined" ? this.cache.set(new timelineMessage_1.TimeLineMessage(message, this).message.id, new timelineMessage_1.TimeLineMessage(message, this)) : void 0;
+            const MessageClass = new timelineMessage_1.TimeLineMessage(message, this);
+            if (typeof MessageClass.message.text !== "string")
+                return;
+            this.emit("timelineCreate", MessageClass);
+            typeof message.body !== "undefined" ? this.cache.set(MessageClass.message.id, MessageClass) : void 0;
         };
     }
 }
