@@ -147,6 +147,9 @@ export class Client extends BaseClient {
         return this.accessToken
     }
 
+    /**
+     * @deprecated
+     */
     private async _AccessTokenGetter(){
         this.accessToken = this.token
     }

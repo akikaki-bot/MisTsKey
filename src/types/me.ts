@@ -10,7 +10,7 @@ export interface MeDetailed {
     avatarBlurhash:                  string | null;
     isBot:                           boolean;
     isCat:                           boolean;
-    emojis:                          Emojis;
+    emojis:                          Emojis[];
     onlineStatus:                    string;
     badgeRoles:                      BadgeRole[];
     url:                             string | null;
