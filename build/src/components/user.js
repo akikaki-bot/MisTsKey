@@ -35,7 +35,7 @@ class MisskeyUser {
     }
     getFollower(config) {
         return __awaiter(this, void 0, void 0, function* () {
-            const followers = yield (0, post_1.GETPOST)(`https://${this.client.getHost}/users/followers`, {
+            const followers = yield (0, post_1.GETPOST)(`https://${this.client.getHost}/api/users/followers`, {
                 i: this.client.getAccessToken(),
                 sinceId: config.sinceId,
                 untilId: config.untilId,

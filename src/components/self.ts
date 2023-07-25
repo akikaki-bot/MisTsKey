@@ -3,6 +3,7 @@ import { GETPOST } from "../posts/post";
 import { Achievement, BadgeRole, Emojis, MeDetailed, Policies, Role } from "../types/me";
 import { NoteBody } from "../types/note";
 import { AccessToken } from "../types/reaction";
+import { Status, UserStatus } from "../types/stat";
 import { Note, Visibility } from "./message";
 
 
@@ -196,4 +197,14 @@ export class Self implements MeDetailed {
 
         return Response.data
     }
+
+    /*
+    async getStatus () : Promise<UserStatus>{
+        const stat = await GETPOST<{userId : string}, Status>(`https://${this.client.getHost}/api/users/stats`, {
+            userId : this.id
+        })
+
+        const StatusData = stat.data
+        return new UserStatus(StatusData)
+    }*/
 }

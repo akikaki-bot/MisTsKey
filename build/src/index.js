@@ -20,19 +20,31 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Client = void 0;
 const ws_1 = __importDefault(require("ws"));
 const base_1 = require("./components/base");
-const cache_1 = require("./components/cache");
+const cache_1 = require("./types/cache");
 const createUUID_1 = require("./utils/createUUID");
 const timelineMessage_1 = require("./components/timelineMessage");
 const post_1 = require("./posts/post");
 const self_1 = require("./components/self");
 /**
  * # Client
- * -> extends BaseClient
+ *
+ * ---
+ *
+ * extends BaseClient
+ *
+ * ---
+ *
+ * みすてぃきーへようこそ！
+ *
+ * Welcome to MisTsKey!
+ *
  *
  * @example
  *
  * ```ts
- * const client = new Client("AccessToken","homeTimeline")
+ * const client = new Client("homeTimeline")
+ *
+ * client.login('Your Access Token')
  *
  * client.on('ready' , () => {
  *    console.log(`Loggined in ${client.i.username}`)
@@ -41,12 +53,6 @@ const self_1 = require("./components/self");
  */
 class Client extends base_1.BaseClient {
     constructor(
-    /**
-    * ## token
-    *
-    * アクセストークンを入力してください。
-    */
-    token, 
     /**
      * ## ChannelType
      *
@@ -59,7 +65,7 @@ class Client extends base_1.BaseClient {
      * ホスト名等詳細な設定が出来ます。
      */
     MoreOption) {
-        super(token, channelType);
+        super(channelType);
         this.host = "misskey.io";
         this.cache = new cache_1.Cache();
         typeof MoreOption !== "undefined" && typeof MoreOption.host !== "undefined"
@@ -94,6 +100,9 @@ class Client extends base_1.BaseClient {
     getAccessToken() {
         return this.accessToken;
     }
+    /**
+     * @deprecated
+     */
     _AccessTokenGetter() {
         return __awaiter(this, void 0, void 0, function* () {
             this.accessToken = this.token;
@@ -113,8 +122,12 @@ class Client extends base_1.BaseClient {
      *
      *
      * ログインしよう！
+     *
+     * @param {string} token アクセストークンを入力してください。
+     *
      */
-    login() {
+    login(token) {
+        this.token = token;
         this.emit('debug', "[Streaming / Connecting] => " + this.host + " / token : " + this.token);
         this._AccessTokenGetter();
         this.ws = new ws_1.default(`wss://${this.host}/streaming?i=${this.token}`);

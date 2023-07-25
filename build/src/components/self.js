@@ -15,7 +15,7 @@ const post_1 = require("../posts/post");
  * ## Self
  * -> implements MeDetailed
  *
- * ############################
+ * ---
  *
  * ユーザー、どちらかと言えば詳細な自分の情報。
  *

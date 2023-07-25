@@ -1,15 +1,27 @@
 import { BaseClient, ChannelType } from "./components/base";
-import { Cache } from "./components/cache";
+import { Cache } from "./types/cache";
 import { TimeLineMessage } from "./components/timelineMessage";
 import { Self } from "./components/self";
 /**
  * # Client
- * -> extends BaseClient
+ *
+ * ---
+ *
+ * extends BaseClient
+ *
+ * ---
+ *
+ * みすてぃきーへようこそ！
+ *
+ * Welcome to MisTsKey!
+ *
  *
  * @example
  *
  * ```ts
- * const client = new Client("AccessToken","homeTimeline")
+ * const client = new Client("homeTimeline")
+ *
+ * client.login('Your Access Token')
  *
  * client.on('ready' , () => {
  *    console.log(`Loggined in ${client.i.username}`)
@@ -17,6 +29,7 @@ import { Self } from "./components/self";
  * ```
  */
 export declare class Client extends BaseClient {
+    token: string;
     private ws;
     private host;
     private id;
@@ -30,12 +43,6 @@ export declare class Client extends BaseClient {
     i: Self;
     cache: Cache<string, any>;
     constructor(
-    /**
-    * ## token
-    *
-    * アクセストークンを入力してください。
-    */
-    token: string, 
     /**
      * ## ChannelType
      *
@@ -73,6 +80,9 @@ export declare class Client extends BaseClient {
     private __sendHelloWorld;
     destory(): void;
     getAccessToken(): string;
+    /**
+     * @deprecated
+     */
     private _AccessTokenGetter;
     private InitSelfUser;
     /**
@@ -81,8 +91,11 @@ export declare class Client extends BaseClient {
      *
      *
      * ログインしよう！
+     *
+     * @param {string} token アクセストークンを入力してください。
+     *
      */
-    login(): void;
+    login(token: string): void;
 }
 export declare interface Client {
     on(event: 'debug', listener: (data: string) => void): this;

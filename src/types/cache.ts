@@ -8,8 +8,5 @@ export class Cache<T = string , Q = any> extends Map {
         super()
     }
 
-    set(key: T, value: Q): this {
-        this.Cache.set(key, value)
-        return this
-    }
+    
 }

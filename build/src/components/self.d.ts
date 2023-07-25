@@ -5,7 +5,7 @@ import { Note, Visibility } from "./message";
  * ## Self
  * -> implements MeDetailed
  *
- * ############################
+ * ---
  *
  * ユーザー、どちらかと言えば詳細な自分の情報。
  *
@@ -19,7 +19,7 @@ export declare class Self implements MeDetailed {
     avatarBlurhash: string | null;
     isBot: boolean;
     isCat: boolean;
-    emojis: Emojis;
+    emojis: Emojis[];
     onlineStatus: string;
     badgeRoles: BadgeRole[];
     url: string | null;

@@ -34,7 +34,9 @@ import { MeDetailed } from "./types/me";
  * @example
  * 
  * ```ts
- * const client = new Client("AccessToken","homeTimeline")
+ * const client = new Client("homeTimeline")
+ * 
+ * client.login('Your Access Token')
  * 
  * client.on('ready' , () => {
  *    console.log(`Loggined in ${client.i.username}`)
@@ -43,6 +45,7 @@ import { MeDetailed } from "./types/me";
  */
 export class Client extends BaseClient {
 
+    public token : string
     private ws : WebSocket
     private host : string = "misskey.io"
     private id : string 
@@ -58,12 +61,6 @@ export class Client extends BaseClient {
 
 
     constructor(        
-        /**
-        * ## token
-        * 
-        * アクセストークンを入力してください。
-        */
-        token : string ,
         /**
          * ## ChannelType
          * 
@@ -98,7 +95,7 @@ export class Client extends BaseClient {
             host ?: string
         }
     ) {
-        super(token, channelType)
+        super(channelType)
 
         this.cache = new Cache<string, Note>()
         typeof MoreOption !== "undefined" && typeof MoreOption.host !== "undefined" 
@@ -168,8 +165,13 @@ export class Client extends BaseClient {
      * 
      * 
      * ログインしよう！
+     * 
+     * @param {string} token アクセストークンを入力してください。
+     * 
      */
-    login() {
+    login(token : string) {
+        this.token = token
+        
         this.emit('debug', "[Streaming / Connecting] => "+this.host+" / token : "+this.token)
         this._AccessTokenGetter()
         this.ws = new WebSocket(`wss://${this.host}/streaming?i=${this.token}`)

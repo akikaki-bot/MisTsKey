@@ -14,12 +14,12 @@ import { EventEmitter } from "node:events"
  */
 
 export class BaseClient extends EventEmitter {
-    public token : string
+    //public token : string
     public channelType : ChannelType
 
-    constructor(token : string, channelType : ChannelType) {
+    constructor(channelType : ChannelType) {
         super()
-        this.token = token
+        //this.token = token
         this.channelType = channelType
     }
 }

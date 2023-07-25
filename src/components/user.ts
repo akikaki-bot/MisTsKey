@@ -1,8 +1,9 @@
 import { AxiosResponse } from "axios"
 import { Client } from ".."
-import { GETPOST } from "../posts/post"
+import { GETPOST, POST } from "../posts/post"
 import { Follower } from "../types/follower"
 import { AccessToken } from "../types/reaction"
+import { Status, UserStatus } from "../types/stat"
 
 
 export interface User {
@@ -60,7 +61,7 @@ export class MisskeyUser implements User {
     }
 
     async getFollower( config ?: Following) : Promise<Follower[] | []> {
-        const followers = await GETPOST<AccessToken & Following, Follower[]>(`https://${this.client.getHost}/users/followers`, {
+        const followers = await GETPOST<AccessToken & Following, Follower[]>(`https://${this.client.getHost}/api/users/followers`, {
              i : this.client.getAccessToken(),
              sinceId : config.sinceId,
              untilId : config.untilId,
@@ -70,4 +71,14 @@ export class MisskeyUser implements User {
 
         return UserData
     }
+
+    /*
+    async getStatus () : Promise<UserStatus>{
+        const stat = await GETPOST<{userId : string}, Status>(`https://${this.client.getHost}/api/users/stats`, {
+            userId : this.id
+        })
+
+        const StatusData = stat.data
+        return new UserStatus(StatusData)
+    }*/
 }

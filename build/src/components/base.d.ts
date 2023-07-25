@@ -1,9 +1,19 @@
 /// <reference types="node" />
 import { EventEmitter } from "node:events";
+/**
+ * # BaseClient
+ *
+ * ---
+ *
+ * extends EventEmitter
+ *
+ * ---
+ *
+ * みすてぃきーのベース！だよ！
+ */
 export declare class BaseClient extends EventEmitter {
-    token: string;
     channelType: ChannelType;
-    constructor(token: string, channelType: ChannelType);
+    constructor(channelType: ChannelType);
 }
 /**
  *  ## Misskey Streaming API
