@@ -190,12 +190,12 @@ export class Self implements MeDetailed {
             expiredAfter : number
         }
     }>) { 
-        const Response = await GETPOST<Partial<NoteBody> & AccessToken, Note>(
+        const Response = await GETPOST<Partial<NoteBody> & AccessToken, { createdNote : Note }>(
             `https://${this.client.getHost}/api/notes/create`,
             Object.assign(configs, { text : text }, {i : this.client.token})
         )
 
-        return Response.data
+        return Response.data.createdNote
     }
 
     /*

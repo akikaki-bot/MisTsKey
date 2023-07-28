@@ -98,7 +98,7 @@ class Self {
     note(text, configs) {
         return __awaiter(this, void 0, void 0, function* () {
             const Response = yield (0, post_1.GETPOST)(`https://${this.client.getHost}/api/notes/create`, Object.assign(configs, { text: text }, { i: this.client.token }));
-            return Response.data;
+            return Response.data.createdNote;
         });
     }
 }
