@@ -1,6 +1,6 @@
 {
   "name": "mistskey",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A api Wrapper for misskey ",
   "main": "build/index.js",
   "scripts": {
