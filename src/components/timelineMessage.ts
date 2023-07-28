@@ -1,6 +1,7 @@
 import { Client } from "..";
 import { GETPOST, POST } from "../posts/post";
 import { AccessToken, DeleteReaction, GetRenote, GlobalNoteIdParam, Reaction } from "../types/reaction";
+import { BaseMisTskeyError, MisTsKeyError } from "./error";
 import { Message, Note } from "./message";
 
 
@@ -22,16 +23,35 @@ export class TimeLineMessage {
     }
 
 
-    //TODO: 実装
     /**
      * # Renote
      * 
-     * このメッセージをRenoteします。
+     * このメッセージ、または指定メッセージをRenoteします。
      * 
-     * @todo
+     * @param {Partial<{ noteId : string}>} config
      */
-    renote() {
-        
+    async renote(config : Partial<{ noteId : string }>) : Promise<Note> {
+        const NoteId = config.noteId ? config.noteId : this.message.id
+        const data = await GETPOST<GlobalNoteIdParam & AccessToken , { createdNote : Note , error ?: BaseMisTskeyError }>(`https://${this.client.getHost}/api/notes/create`, {
+            i : this.client.token,
+            noteId : NoteId
+        })
+        return data.data.createdNote
+    }
+
+    /**
+     * # unRenote
+     * 
+     * このメッセージ、または指定メッセージをunRenoteします。
+     * 
+     * @param {Partial<{ noteId : string}>} config
+     */
+    async unRenote(config : Partial<{ noteId : string }>) : Promise<void> {
+        const NoteId = config.noteId ? config.noteId : this.message.id
+        await POST<GlobalNoteIdParam & AccessToken>(`https://${this.client.getHost}/api/notes/unrenote`, {
+            i : this.client.token,
+            noteId : NoteId
+        })
     }
 
     /**
@@ -47,17 +67,14 @@ export class TimeLineMessage {
      * 
      * * Arr Length : limit
      */
-    async getRenote( noteId ?: string , limit ?: number , sinceId ?: string , untilId ?: string ) {
-        const NoteId = noteId ? noteId : this.message.id
-        const data = await GETPOST<GlobalNoteIdParam & Partial<GetRenote> & AccessToken , Array<Note>>(`https://${this.client.getHost}api/notes/renotes`, {
+    async getRenote(config ?: Partial<{noteId : string , limit : number , sinceId : string , untilId : string}> ) {
+        const NoteId = config.noteId ? config.noteId : this.message.id
+        const data = await GETPOST<GlobalNoteIdParam & Partial<GetRenote> & AccessToken , Array<Note>>(`https://${this.client.getHost}/api/notes/renotes`, {
             i : this.client.token , 
             noteId : NoteId,
-            limit : limit,
-            sinceId : sinceId,
-            untilId : untilId
-        })
-        .catch(() => {
-            throw new Error('[Misskey.ts API Error]')
+            limit : config.limit,
+            sinceId : config.sinceId,
+            untilId : config.untilId
         })
 
         return data.data
@@ -71,23 +88,17 @@ export class TimeLineMessage {
     async like() {
         const NoteId = this.message.id
         await POST<GlobalNoteIdParam & AccessToken>(`https://${this.client.getHost}/api/pages/like`, {i : this.client.token , noteId : NoteId})
-        .catch(() => {
-            throw new Error('[Misskey.ts API Error]\n Like出来ませんでした。自分のノートなのかもしれません。')
-        })
     }
 
 
     /**
-     * # UnLike
+     * # unLike
      * 
      * このメッセージを unLike します。
      */
-    async Unlike() {
+    async unLike() {
         const NoteId = this.message.id
         await POST<GlobalNoteIdParam & AccessToken>(`https://${this.client.getHost}/api/pages/unlike`, {i : this.client.token , noteId : NoteId})
-        .catch(() => {
-            throw new Error('[Misskey.ts API Error]\n unLike出来ませんでした。自分のノートなのかもしれません。')
-        })
     }
 
 

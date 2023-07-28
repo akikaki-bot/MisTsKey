@@ -12,11 +12,23 @@ export declare class TimeLineMessage {
     /**
      * # Renote
      *
-     * このメッセージをRenoteします。
+     * このメッセージ、または指定メッセージをRenoteします。
      *
-     * @todo
+     * @param {Partial<{ noteId : string}>} config
      */
-    renote(): void;
+    renote(config: Partial<{
+        noteId: string;
+    }>): Promise<Note>;
+    /**
+     * # unRenote
+     *
+     * このメッセージ、または指定メッセージをunRenoteします。
+     *
+     * @param {Partial<{ noteId : string}>} config
+     */
+    unRenote(config: Partial<{
+        noteId: string;
+    }>): Promise<void>;
     /**
      * # GetRenote
      *
@@ -30,7 +42,12 @@ export declare class TimeLineMessage {
      *
      * * Arr Length : limit
      */
-    getRenote(noteId?: string, limit?: number, sinceId?: string, untilId?: string): Promise<Note[]>;
+    getRenote(config?: Partial<{
+        noteId: string;
+        limit: number;
+        sinceId: string;
+        untilId: string;
+    }>): Promise<Note[]>;
     /**
      * # Like
      *
@@ -38,11 +55,11 @@ export declare class TimeLineMessage {
      */
     like(): Promise<void>;
     /**
-     * # UnLike
+     * # unLike
      *
      * このメッセージを unLike します。
      */
-    Unlike(): Promise<void>;
+    unLike(): Promise<void>;
     /**
      * # Reaction
      * このメッセージにリアクションをします。

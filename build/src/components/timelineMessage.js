@@ -19,15 +19,38 @@ class TimeLineMessage {
         this.message.BodyId = data.body.id;
         this.message.text === null ? this.message.IsRenoteMessage = true : this.message.IsRenoteMessage = false;
     }
-    //TODO: 実装
     /**
      * # Renote
      *
-     * このメッセージをRenoteします。
+     * このメッセージ、または指定メッセージをRenoteします。
      *
-     * @todo
+     * @param {Partial<{ noteId : string}>} config
      */
-    renote() {
+    renote(config) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const NoteId = config.noteId ? config.noteId : this.message.id;
+            const data = yield (0, post_1.GETPOST)(`https://${this.client.getHost}/api/notes/create`, {
+                i: this.client.token,
+                noteId: NoteId
+            });
+            return data.data.createdNote;
+        });
+    }
+    /**
+     * # unRenote
+     *
+     * このメッセージ、または指定メッセージをunRenoteします。
+     *
+     * @param {Partial<{ noteId : string}>} config
+     */
+    unRenote(config) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const NoteId = config.noteId ? config.noteId : this.message.id;
+            yield (0, post_1.POST)(`https://${this.client.getHost}/api/notes/unrenote`, {
+                i: this.client.token,
+                noteId: NoteId
+            });
+        });
     }
     /**
      * # GetRenote
@@ -42,18 +65,15 @@ class TimeLineMessage {
      *
      * * Arr Length : limit
      */
-    getRenote(noteId, limit, sinceId, untilId) {
+    getRenote(config) {
         return __awaiter(this, void 0, void 0, function* () {
-            const NoteId = noteId ? noteId : this.message.id;
-            const data = yield (0, post_1.GETPOST)(`https://${this.client.getHost}api/notes/renotes`, {
+            const NoteId = config.noteId ? config.noteId : this.message.id;
+            const data = yield (0, post_1.GETPOST)(`https://${this.client.getHost}/api/notes/renotes`, {
                 i: this.client.token,
                 noteId: NoteId,
-                limit: limit,
-                sinceId: sinceId,
-                untilId: untilId
-            })
-                .catch(() => {
-                throw new Error('[Misskey.ts API Error]');
+                limit: config.limit,
+                sinceId: config.sinceId,
+                untilId: config.untilId
             });
             return data.data;
         });
@@ -66,24 +86,18 @@ class TimeLineMessage {
     like() {
         return __awaiter(this, void 0, void 0, function* () {
             const NoteId = this.message.id;
-            yield (0, post_1.POST)(`https://${this.client.getHost}/api/pages/like`, { i: this.client.token, noteId: NoteId })
-                .catch(() => {
-                throw new Error('[Misskey.ts API Error]\n Like出来ませんでした。自分のノートなのかもしれません。');
-            });
+            yield (0, post_1.POST)(`https://${this.client.getHost}/api/pages/like`, { i: this.client.token, noteId: NoteId });
         });
     }
     /**
-     * # UnLike
+     * # unLike
      *
      * このメッセージを unLike します。
      */
-    Unlike() {
+    unLike() {
         return __awaiter(this, void 0, void 0, function* () {
             const NoteId = this.message.id;
-            yield (0, post_1.POST)(`https://${this.client.getHost}/api/pages/unlike`, { i: this.client.token, noteId: NoteId })
-                .catch(() => {
-                throw new Error('[Misskey.ts API Error]\n unLike出来ませんでした。自分のノートなのかもしれません。');
-            });
+            yield (0, post_1.POST)(`https://${this.client.getHost}/api/pages/unlike`, { i: this.client.token, noteId: NoteId });
         });
     }
     /**
