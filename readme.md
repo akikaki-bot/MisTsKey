@@ -1,5 +1,5 @@
 <div align="center"> 
-  <img src="./logos/removed.logo.png"></img>
+  <img src="./logos/grn.removed.png"></img>
   <br />
   <p>The Powerfull API Wrapper for node.js and Nice Bot Developers</p>
 </div>

@@ -184,7 +184,13 @@ export class Client extends BaseClient {
      * @deprecated
      */
     private async _AccessTokenGetter(){
-        this.accessToken = this.token
+        
+    }
+
+    private __InitLogin( token : string ) {
+        this.token = token
+        this.accessToken = token
+        this.state = WebSocketState.init
     }
 
     private async InitSelfUser() {
@@ -208,12 +214,11 @@ export class Client extends BaseClient {
      * 
      */
     login(token : string) {
-        this.token = token
-        this.state = WebSocketState.init
-        this.emit('debug', "[Streaming / Connecting] => "+this.host+" / token : "+this.token)
-        this._AccessTokenGetter()
-        this.ws = new WebSocket(`wss://${this.host}/streaming?i=${this.token}`)
+        this.__InitLogin(token)
 
+        this.emit('debug', "[Streaming / Connecting] => "+this.host+" / token : "+this.token)
+        this.ws = new WebSocket(`wss://${this.host}/streaming?i=${this.token}`)
+        
         this.ws.onopen = () => {
             this.state = WebSocketState.connecting
             this.emit('debug', `[Streaming / Successfully] => ${this.host} / Successfully connect!`)
