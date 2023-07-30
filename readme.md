@@ -1,5 +1,4 @@
-[!MisTsKey](./logos/logo.png)
-
+![MisTsKey](./logos/logo.png)
 ### The **Powerfull** API Wrapper for **node.js** and **Nice Bot Developers**
 
 Misskey.io等、Misskey系統SNS API専用APIラッパーです。
