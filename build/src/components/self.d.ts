@@ -1,5 +1,6 @@
 import { Client } from "..";
 import { Achievement, BadgeRole, Emojis, MeDetailed, Policies, Role } from "../types/me";
+import { CreatePoll } from "./createpoll";
 import { Note, Visibility } from "./message";
 /**
  * ## Self
@@ -85,6 +86,15 @@ export declare class Self implements MeDetailed {
     private client;
     constructor(user: MeDetailed, client?: Client);
     note(text: string | null, configs?: Partial<{
+        /**
+       * # Visibility
+       *
+       * 公開範囲を設定します。
+       *
+       * ここの設定は `client.defaultNoteChannelVisibility` より優先されます。
+       *
+       * ここが`undefined`である場合は、 `client.defaultNoteChannelVisibility` が優先されます。
+       */
         visibility: Visibility;
         visibleUserIds: Array<string>;
         cw: string | null;
@@ -100,13 +110,10 @@ export declare class Self implements MeDetailed {
         /**
          * # POLL
          *
+         * 投票オブジェクトです。`CreatePoll` が使えます。
+         *
          * See : [Misskey-hub](https://misskey-hub.net/docs/api/endpoints/notes/create.html)
          */
-        poll: {
-            choices: Array<string>;
-            multiple: boolean;
-            expiresAt: number;
-            expiredAfter: number;
-        };
+        poll: CreatePoll;
     }>): Promise<Note>;
 }

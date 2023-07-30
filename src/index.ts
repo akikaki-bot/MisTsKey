@@ -14,8 +14,9 @@ import { GoodbyWorld } from "./types/goodbyworld";
 import { GETPOST } from "./posts/post";
 import { AccessToken } from "./types/reaction";
 import { Self } from "./components/self";
-import { Note } from "./components/message";
+import { Note, Visibility } from "./components/message";
 import { MeDetailed } from "./types/me";
+import { WebSocketState } from "./types/wsState";
 
 /**
  * # Client
@@ -45,11 +46,21 @@ import { MeDetailed } from "./types/me";
  */
 export class Client extends BaseClient {
 
-    public token : string
     private ws : WebSocket
     private host : string = "misskey.io"
     private id : string 
     private accessToken : string
+
+    public token : string
+    /**
+     * # State
+     * 
+     * WebSocketの状態を表します。
+     * 
+     * enum : `WebSocketState`
+     * 
+     */
+    public state : WebSocketState
     /**
      * # i
      * 
@@ -57,7 +68,23 @@ export class Client extends BaseClient {
      * 
      */
     public i : Self
+    /**
+     * # cache
+     * 
+     * Misskeyから送られてきたデータのキャッシュです。
+     * 
+     * noteIDで取得します。
+     */
     public cache : Cache<string, any>
+    /**
+     * # defaultNoteChannelVisibility
+     * 
+     * ノートの公開範囲を設定します。
+     * 
+     * @readonly
+     * 
+     */
+    public readonly defaultNoteChannelVisibility : Visibility = "public"
 
 
     constructor(        
@@ -93,6 +120,13 @@ export class Client extends BaseClient {
              * ```
              */
             host ?: string
+            /**
+             * # MoreOption.defaultNoteChannel
+             * デフォルトで送信するチャンネルを選択します。
+             * 
+             * 設定がない場合、`public` となります。
+             */
+            defaultNoteChannel ?: Visibility
         }
     ) {
         super(channelType)
@@ -101,6 +135,8 @@ export class Client extends BaseClient {
         typeof MoreOption !== "undefined" && typeof MoreOption.host !== "undefined" 
         ? this.host = MoreOption.host
         : void 0
+
+        this.defaultNoteChannelVisibility = MoreOption.defaultNoteChannel
 
         this.id = createUuid()
     }
@@ -154,9 +190,11 @@ export class Client extends BaseClient {
     private async InitSelfUser() {
         this.emit('debug', "[API / Getting] Client User [HOST] => "+this.host+" / token : "+this.token)
 
-       const self = await GETPOST<AccessToken, MeDetailed>(`https://${this.host}/api/i`, {i : this.token})
-       this.i = new Self(self.data, this)
-       this.emit('ready', () => {})
+       GETPOST<AccessToken, MeDetailed>(`https://${this.host}/api/i`, {i : this.token}).then((self) => {
+            this.i = new Self(self.data, this)
+            this.emit('ready', () => {})
+            this.state = WebSocketState.connected
+       })
     }
 
     /**
@@ -171,12 +209,13 @@ export class Client extends BaseClient {
      */
     login(token : string) {
         this.token = token
-        
+        this.state = WebSocketState.init
         this.emit('debug', "[Streaming / Connecting] => "+this.host+" / token : "+this.token)
         this._AccessTokenGetter()
         this.ws = new WebSocket(`wss://${this.host}/streaming?i=${this.token}`)
 
         this.ws.onopen = () => {
+            this.state = WebSocketState.connecting
             this.emit('debug', `[Streaming / Successfully] => ${this.host} / Successfully connect!`)
             this.__sendHelloWorld()
             this.InitSelfUser()
@@ -190,6 +229,17 @@ export class Client extends BaseClient {
             this.emit("timelineCreate", MessageClass)
             typeof message.body !== "undefined" ? this.cache.set(MessageClass.message.id, MessageClass) : void 0
         }
+
+        this.ws.onclose = () => {
+            this.emit('debug' , "[Streaming / ReConnecting] => Function Logining...")
+            this.state = WebSocketState.reconnecting
+            this.ws = void 0
+            this.login(this.token)
+        }
+    }
+
+    reconnect()  {
+        this.ws = new WebSocket(`wss://${this.host}/streaming?i=${this.token}`)
     }
 
     
@@ -199,5 +249,18 @@ export class Client extends BaseClient {
 export declare interface Client {
     on(event : 'debug', listener: ( data: string ) => void): this
     on(event : "timelineCreate", listener : (data : TimeLineMessage) => void) : this
+    /**
+     * @deprecated
+     * このイベントは１回だけでなく複数回実行される可能性があります。
+     * 
+     * よって、もしあなたが一度きりの実行にしたい場合は`.once`イベントを使用してください。
+     * 
+     * ---
+     * 
+     * The event may be emitted not just once, but multiple times—twice or more. 
+     * 
+     * Therefore, if you do not want the event to be emitted more than twice, please make use of the `.once` event.
+     */
     on(event : "ready", listener: () => void) : this
+    once(event : "ready", listener: () => void) : this
 }

@@ -38,8 +38,8 @@ class Self {
         this.uri = user.uri;
         this.movedTo = user.movedTo;
         this.alsoKnownAs = user.alsoKnownAs;
-        this.createdAt = user.createdAt;
-        this.updatedAt = user.updatedAt;
+        this.createdAt = new Date(user.createdAt);
+        this.updatedAt = new Date(user.updatedAt);
         this.lastFetchedAt = user.lastFetchedAt;
         this.bannerUrl = user.bannerUrl;
         this.bannerBlurhash = user.bannerBlurhash;
@@ -97,7 +97,16 @@ class Self {
     }
     note(text, configs) {
         return __awaiter(this, void 0, void 0, function* () {
-            const Response = yield (0, post_1.GETPOST)(`https://${this.client.getHost}/api/notes/create`, Object.assign(configs, { text: text }, { i: this.client.token }));
+            typeof configs !== "undefined" ?
+                typeof configs.visibility !== "undefined" ?
+                    configs.visibility = this.client.defaultNoteChannelVisibility
+                    : configs.visibility
+                : void 0;
+            const poll = configs.poll.toJSON();
+            const NewConfig = configs;
+            delete NewConfig["poll"];
+            const conf = Object.assign(NewConfig, { poll: poll }, { text: text });
+            const Response = yield (0, post_1.GETPOST)(`https://${this.client.getHost}/api/notes/create`, Object.assign(conf, { i: this.client.token }));
             return Response.data.createdNote;
         });
     }

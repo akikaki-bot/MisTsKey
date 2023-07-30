@@ -7,13 +7,8 @@ export interface BaseMisTskeyError {
     kind: string,
 }
 
-export class MisTsKeyError extends Error implements BaseMisTskeyError {
-    message: string
-    code: string
-    id: string
-    kind: string
-
+export class MisTsKeyError extends Error {
     constructor( config : BaseMisTskeyError ) {
-        super(`[${config.code}] \n ${config.message} \n uuid : ${config.id} / kind : ${config.kind}`)
+        super(`[${config.code ?? "Unknown Code"}] \n ${config.message ?? "Unknown Error"} \n uuid : ${config.id ?? "Unknown UUID"} / kind : ${config.kind ?? "Unknown Kind"}`)
     }
 }

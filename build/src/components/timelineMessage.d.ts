@@ -16,7 +16,7 @@ export declare class TimeLineMessage {
      *
      * @param {Partial<{ noteId : string}>} config
      */
-    renote(config: Partial<{
+    renote(config?: Partial<{
         noteId: string;
     }>): Promise<Note>;
     /**
@@ -26,7 +26,7 @@ export declare class TimeLineMessage {
      *
      * @param {Partial<{ noteId : string}>} config
      */
-    unRenote(config: Partial<{
+    unRenote(config?: Partial<{
         noteId: string;
     }>): Promise<void>;
     /**
@@ -73,7 +73,7 @@ export declare class TimeLineMessage {
      * # Reaction
      * このメッセージのリアクションをすべて消します。
      *
-     *
+     * もしあなたがリアクションをしていなければ、エラーがThrowされます。
      *
      * More Detail [Docs](https://misskey-hub.net/docs/api/endpoints/notes/reactions/delete.html)
      */

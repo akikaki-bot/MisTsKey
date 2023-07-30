@@ -12,7 +12,7 @@ npm i mistskey
 
 ```ts
 
-import { Client } from "../../something/file"
+import { Client } from "mistskey"
 
 const client = new Client("globalTimeline")
 

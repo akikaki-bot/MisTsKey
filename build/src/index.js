@@ -25,6 +25,7 @@ const createUUID_1 = require("./utils/createUUID");
 const timelineMessage_1 = require("./components/timelineMessage");
 const post_1 = require("./posts/post");
 const self_1 = require("./components/self");
+const wsState_1 = require("./types/wsState");
 /**
  * # Client
  *
@@ -67,10 +68,20 @@ class Client extends base_1.BaseClient {
     MoreOption) {
         super(channelType);
         this.host = "misskey.io";
+        /**
+         * # defaultNoteChannelVisibility
+         *
+         * ノートの公開範囲を設定します。
+         *
+         * @readonly
+         *
+         */
+        this.defaultNoteChannelVisibility = "public";
         this.cache = new cache_1.Cache();
         typeof MoreOption !== "undefined" && typeof MoreOption.host !== "undefined"
             ? this.host = MoreOption.host
             : void 0;
+        this.defaultNoteChannelVisibility = MoreOption.defaultNoteChannel;
         this.id = (0, createUUID_1.createUuid)();
     }
     get getHost() {
@@ -111,9 +122,11 @@ class Client extends base_1.BaseClient {
     InitSelfUser() {
         return __awaiter(this, void 0, void 0, function* () {
             this.emit('debug', "[API / Getting] Client User [HOST] => " + this.host + " / token : " + this.token);
-            const self = yield (0, post_1.GETPOST)(`https://${this.host}/api/i`, { i: this.token });
-            this.i = new self_1.Self(self.data, this);
-            this.emit('ready', () => { });
+            (0, post_1.GETPOST)(`https://${this.host}/api/i`, { i: this.token }).then((self) => {
+                this.i = new self_1.Self(self.data, this);
+                this.emit('ready', () => { });
+                this.state = wsState_1.WebSocketState.connected;
+            });
         });
     }
     /**
@@ -128,10 +141,12 @@ class Client extends base_1.BaseClient {
      */
     login(token) {
         this.token = token;
+        this.state = wsState_1.WebSocketState.init;
         this.emit('debug', "[Streaming / Connecting] => " + this.host + " / token : " + this.token);
         this._AccessTokenGetter();
         this.ws = new ws_1.default(`wss://${this.host}/streaming?i=${this.token}`);
         this.ws.onopen = () => {
+            this.state = wsState_1.WebSocketState.connecting;
             this.emit('debug', `[Streaming / Successfully] => ${this.host} / Successfully connect!`);
             this.__sendHelloWorld();
             this.InitSelfUser();
@@ -144,6 +159,15 @@ class Client extends base_1.BaseClient {
             this.emit("timelineCreate", MessageClass);
             typeof message.body !== "undefined" ? this.cache.set(MessageClass.message.id, MessageClass) : void 0;
         };
+        this.ws.onclose = () => {
+            this.emit('debug', "[Streaming / ReConnecting] => Function Logining...");
+            this.state = wsState_1.WebSocketState.reconnecting;
+            this.ws = void 0;
+            this.login(this.token);
+        };
+    }
+    reconnect() {
+        this.ws = new ws_1.default(`wss://${this.host}/streaming?i=${this.token}`);
     }
 }
 exports.Client = Client;

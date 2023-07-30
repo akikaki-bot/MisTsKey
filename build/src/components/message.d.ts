@@ -1,4 +1,5 @@
 import { Client } from "..";
+import { CreatePoll } from "./createpoll";
 import { MisskeyUser } from "./user";
 export interface Message {
     type: "channel";
@@ -122,6 +123,15 @@ export declare class Note implements BaseNote {
      * ```
      */
     reply(text: string | null, configs?: Partial<{
+        /**
+         * # Visibility
+         *
+         * 公開範囲を設定します。
+         *
+         * ここの設定は `client.defaultNoteChannelVisibility` より優先されます。
+         *
+         * ここが`undefined`である場合は、 `client.defaultNoteChannelVisibility` が優先されます。
+         */
         visibility: Visibility;
         visibleUserIds: Array<string>;
         cw: string | null;
@@ -137,15 +147,14 @@ export declare class Note implements BaseNote {
         /**
          * # POLL
          *
+         * class `CreatePoll` をご利用ください。
+         *
          * See : [Misskey-hub](https://misskey-hub.net/docs/api/endpoints/notes/create.html)
          */
-        poll: {
-            choices: Array<string>;
-            multiple: boolean;
-            expiresAt: number;
-            expiredAfter: number;
-        };
-    }>): Promise<Note>;
+        poll: CreatePoll;
+    }>): Promise<{
+        createdNote: Note;
+    }>;
     /**
      * # Delete
      *

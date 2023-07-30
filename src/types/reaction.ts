@@ -7,6 +7,10 @@ export interface DeleteReaction {
     noteId : string
 }
 
+export interface GlobalReNoteIdParam {
+    renoteId : string
+}
+
 export interface GlobalNoteIdParam {
     noteId : string
 }

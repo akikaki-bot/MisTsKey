@@ -57,8 +57,21 @@ class Note {
      */
     reply(text, configs) {
         return __awaiter(this, void 0, void 0, function* () {
-            configs.replyId = this.id;
-            const Response = yield (0, post_1.GETPOST)(`https://${this.client.getHost}/api/notes/create`, Object.assign(configs, { text: text }, { i: this.client.token }));
+            // これはIf文つかえよ私
+            typeof configs !== "undefined" ?
+                typeof configs.visibility === "undefined" ?
+                    configs.visibility = this.client.defaultNoteChannelVisibility
+                    : configs.visibility
+                : void 0;
+            //ReplyIdの自動設定
+            configs.replyId = this.replyId;
+            //投票関連の汚いコード
+            const poll = configs.poll.toJSON();
+            const NewConfig = configs;
+            delete NewConfig["poll"];
+            const conf = Object.assign(NewConfig, { poll: poll }, { text: text });
+            //ここまで 
+            const Response = yield (0, post_1.GETPOST)(`https://${this.client.getHost}/api/notes/create`, Object.assign(conf, { i: this.client.token }));
             return Response.data;
         });
     }

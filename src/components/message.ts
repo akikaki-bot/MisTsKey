@@ -2,6 +2,7 @@ import { Client } from ".."
 import { GETPOST, POST } from "../posts/post"
 import { NoteBody } from "../types/note"
 import { AccessToken } from "../types/reaction"
+import { CreatePoll } from "./createpoll"
 import { MisskeyUser, User } from "./user"
 
 export interface Message {
@@ -156,6 +157,15 @@ export class Note implements BaseNote {
      * ```
      */
     async reply( text : string | null , configs ?: Partial<{
+      /**
+       * # Visibility
+       * 
+       * 公開範囲を設定します。
+       * 
+       * ここの設定は `client.defaultNoteChannelVisibility` より優先されます。
+       * 
+       * ここが`undefined`である場合は、 `client.defaultNoteChannelVisibility` が優先されます。
+       */
       visibility : Visibility,
       visibleUserIds : Array<string>,
       cw : string | null,
@@ -171,21 +181,36 @@ export class Note implements BaseNote {
       /**
        * # POLL
        * 
+       * class `CreatePoll` をご利用ください。
+       * 
        * See : [Misskey-hub](https://misskey-hub.net/docs/api/endpoints/notes/create.html)
        */
-      poll : {
-          choices : Array<string>
-          multiple : boolean
-          expiresAt : number
-          expiredAfter : number
-      }
-  }>) { 
-      configs.replyId = this.id
-      const Response = await GETPOST<Partial<NoteBody> & AccessToken, Note>(
-          `https://${this.client.getHost}/api/notes/create`,
-          Object.assign(configs, { text : text }, {i : this.client.token})
-      )
+      poll : CreatePoll
+    }>) { 
+        // これはIf文つかえよ私
+        typeof configs !== "undefined" ? 
+            typeof configs.visibility === "undefined" ? 
+                configs.visibility = this.client.defaultNoteChannelVisibility 
+            : configs.visibility 
+        : void 0
 
+        //ReplyIdの自動設定
+        configs.replyId = this.replyId
+
+        //投票関連の汚いコード
+        const poll = configs.poll.toJSON()
+        const NewConfig = configs
+        delete NewConfig["poll"]
+        const conf : NoteBody = Object.assign( NewConfig , { poll : poll } , { text : text } ) 
+        //ここまで 
+
+        const Response = await GETPOST<NoteBody & AccessToken, { createdNote : Note }>(
+            `https://${this.client.getHost}/api/notes/create`,
+            Object.assign(
+                conf,
+                {i : this.client.token}
+            )
+        )
       return Response.data
     }
 
@@ -201,4 +226,6 @@ export class Note implements BaseNote {
             throw new Error('[Misskey.ts API Error] \n 削除できませんでした。')
         })
     }
+
+
 }

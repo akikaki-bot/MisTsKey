@@ -1,6 +1,6 @@
 import { Client } from "..";
 import { GETPOST, POST } from "../posts/post";
-import { AccessToken, DeleteReaction, GetRenote, GlobalNoteIdParam, Reaction } from "../types/reaction";
+import { AccessToken, DeleteReaction, GetRenote, GlobalNoteIdParam, GlobalReNoteIdParam, Reaction } from "../types/reaction";
 import { BaseMisTskeyError, MisTsKeyError } from "./error";
 import { Message, Note } from "./message";
 
@@ -22,7 +22,6 @@ export class TimeLineMessage {
         this.message.text === null ? this.message.IsRenoteMessage = true : this.message.IsRenoteMessage = false
     }
 
-
     /**
      * # Renote
      * 
@@ -30,11 +29,11 @@ export class TimeLineMessage {
      * 
      * @param {Partial<{ noteId : string}>} config
      */
-    async renote(config : Partial<{ noteId : string }>) : Promise<Note> {
-        const NoteId = config.noteId ? config.noteId : this.message.id
-        const data = await GETPOST<GlobalNoteIdParam & AccessToken , { createdNote : Note , error ?: BaseMisTskeyError }>(`https://${this.client.getHost}/api/notes/create`, {
+    async renote(config ?: Partial<{ noteId : string }>) : Promise<Note> {
+        const NoteId = config ? config.noteId ? config.noteId : this.message.id : this.message.id
+        const data = await GETPOST<GlobalReNoteIdParam & AccessToken , { createdNote : Note , error ?: BaseMisTskeyError }>(`https://${this.client.getHost}/api/notes/create`, {
             i : this.client.token,
-            noteId : NoteId
+            renoteId : NoteId
         })
         return data.data.createdNote
     }
@@ -46,11 +45,11 @@ export class TimeLineMessage {
      * 
      * @param {Partial<{ noteId : string}>} config
      */
-    async unRenote(config : Partial<{ noteId : string }>) : Promise<void> {
-        const NoteId = config.noteId ? config.noteId : this.message.id
-        await POST<GlobalNoteIdParam & AccessToken>(`https://${this.client.getHost}/api/notes/unrenote`, {
+    async unRenote(config ?: Partial<{ noteId : string }>) : Promise<void> {
+        const NoteId = config ? config.noteId ? config.noteId : this.message.id : this.message.id
+        await POST<GlobalReNoteIdParam & AccessToken>(`https://${this.client.getHost}/api/notes/unrenote`, {
             i : this.client.token,
-            noteId : NoteId
+            renoteId : NoteId
         })
     }
 
@@ -90,7 +89,6 @@ export class TimeLineMessage {
         await POST<GlobalNoteIdParam & AccessToken>(`https://${this.client.getHost}/api/pages/like`, {i : this.client.token , noteId : NoteId})
     }
 
-
     /**
      * # unLike
      * 
@@ -127,7 +125,7 @@ export class TimeLineMessage {
      * # Reaction
      * このメッセージのリアクションをすべて消します。
      * 
-     * 
+     * もしあなたがリアクションをしていなければ、エラーがThrowされます。
      * 
      * More Detail [Docs](https://misskey-hub.net/docs/api/endpoints/notes/reactions/delete.html)
      */
@@ -142,4 +140,5 @@ export class TimeLineMessage {
             }
         )
     }
+
 }

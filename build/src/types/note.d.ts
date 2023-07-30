@@ -1,5 +1,6 @@
 import { Visibility } from "../components/message";
-export interface NoteBody {
+export type NoteBody = Partial<_NoteBody>;
+export interface _NoteBody {
     visibility: Visibility;
     visibleUserIds: Array<string>;
     text: string | null;

@@ -5,11 +5,7 @@ export interface BaseMisTskeyError {
     id: uuid;
     kind: string;
 }
-export declare class MisTsKeyError extends Error implements BaseMisTskeyError {
-    message: string;
-    code: string;
-    id: string;
-    kind: string;
+export declare class MisTsKeyError extends Error {
     constructor(config: BaseMisTskeyError);
 }
 export {};

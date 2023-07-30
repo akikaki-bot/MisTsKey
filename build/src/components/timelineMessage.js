@@ -28,10 +28,10 @@ class TimeLineMessage {
      */
     renote(config) {
         return __awaiter(this, void 0, void 0, function* () {
-            const NoteId = config.noteId ? config.noteId : this.message.id;
+            const NoteId = config ? config.noteId ? config.noteId : this.message.id : this.message.id;
             const data = yield (0, post_1.GETPOST)(`https://${this.client.getHost}/api/notes/create`, {
                 i: this.client.token,
-                noteId: NoteId
+                renoteId: NoteId
             });
             return data.data.createdNote;
         });
@@ -45,10 +45,10 @@ class TimeLineMessage {
      */
     unRenote(config) {
         return __awaiter(this, void 0, void 0, function* () {
-            const NoteId = config.noteId ? config.noteId : this.message.id;
+            const NoteId = config ? config.noteId ? config.noteId : this.message.id : this.message.id;
             yield (0, post_1.POST)(`https://${this.client.getHost}/api/notes/unrenote`, {
                 i: this.client.token,
-                noteId: NoteId
+                renoteId: NoteId
             });
         });
     }
@@ -122,7 +122,7 @@ class TimeLineMessage {
      * # Reaction
      * このメッセージのリアクションをすべて消します。
      *
-     *
+     * もしあなたがリアクションをしていなければ、エラーがThrowされます。
      *
      * More Detail [Docs](https://misskey-hub.net/docs/api/endpoints/notes/reactions/delete.html)
      */

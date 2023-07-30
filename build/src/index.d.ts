@@ -2,6 +2,8 @@ import { BaseClient, ChannelType } from "./components/base";
 import { Cache } from "./types/cache";
 import { TimeLineMessage } from "./components/timelineMessage";
 import { Self } from "./components/self";
+import { Visibility } from "./components/message";
+import { WebSocketState } from "./types/wsState";
 /**
  * # Client
  *
@@ -29,11 +31,20 @@ import { Self } from "./components/self";
  * ```
  */
 export declare class Client extends BaseClient {
-    token: string;
     private ws;
     private host;
     private id;
     private accessToken;
+    token: string;
+    /**
+     * # State
+     *
+     * WebSocketの状態を表します。
+     *
+     * enum : `WebSocketState`
+     *
+     */
+    state: WebSocketState;
     /**
      * # i
      *
@@ -41,7 +52,23 @@ export declare class Client extends BaseClient {
      *
      */
     i: Self;
+    /**
+     * # cache
+     *
+     * Misskeyから送られてきたデータのキャッシュです。
+     *
+     * noteIDで取得します。
+     */
     cache: Cache<string, any>;
+    /**
+     * # defaultNoteChannelVisibility
+     *
+     * ノートの公開範囲を設定します。
+     *
+     * @readonly
+     *
+     */
+    readonly defaultNoteChannelVisibility: Visibility;
     constructor(
     /**
      * ## ChannelType
@@ -75,6 +102,13 @@ export declare class Client extends BaseClient {
          * ```
          */
         host?: string;
+        /**
+         * # MoreOption.defaultNoteChannel
+         * デフォルトで送信するチャンネルを選択します。
+         *
+         * 設定がない場合、`public` となります。
+         */
+        defaultNoteChannel?: Visibility;
     });
     get getHost(): string;
     private __sendHelloWorld;
@@ -96,9 +130,23 @@ export declare class Client extends BaseClient {
      *
      */
     login(token: string): void;
+    reconnect(): void;
 }
 export declare interface Client {
     on(event: 'debug', listener: (data: string) => void): this;
     on(event: "timelineCreate", listener: (data: TimeLineMessage) => void): this;
+    /**
+     * @deprecated
+     * このイベントは１回だけでなく複数回実行される可能性があります。
+     *
+     * よって、もしあなたが一度きりの実行にしたい場合は`.once`イベントを使用してください。
+     *
+     * ---
+     *
+     * The event may be emitted not just once, but multiple times—twice or more.
+     *
+     * Therefore, if you do not want the event to be emitted more than twice, please make use of the `.once` event.
+     */
     on(event: "ready", listener: () => void): this;
+    once(event: "ready", listener: () => void): this;
 }

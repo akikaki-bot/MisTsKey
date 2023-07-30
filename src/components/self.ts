@@ -4,6 +4,7 @@ import { Achievement, BadgeRole, Emojis, MeDetailed, Policies, Role } from "../t
 import { NoteBody } from "../types/note";
 import { AccessToken } from "../types/reaction";
 import { Status, UserStatus } from "../types/stat";
+import { CreatePoll } from "./createpoll";
 import { Note, Visibility } from "./message";
 
 
@@ -107,8 +108,8 @@ export class Self implements MeDetailed {
         this.uri = user.uri
         this.movedTo = user.movedTo
         this.alsoKnownAs = user.alsoKnownAs
-        this.createdAt = user.createdAt
-        this.updatedAt = user.updatedAt
+        this.createdAt = new Date(user.createdAt)
+        this.updatedAt = new Date(user.updatedAt)
         this.lastFetchedAt = user.lastFetchedAt
         this.bannerUrl = user.bannerUrl 
         this.bannerBlurhash = user.bannerBlurhash
@@ -166,6 +167,15 @@ export class Self implements MeDetailed {
     }
 
     async note( text : string | null , configs ?: Partial<{
+        /**
+       * # Visibility
+       * 
+       * 公開範囲を設定します。
+       * 
+       * ここの設定は `client.defaultNoteChannelVisibility` より優先されます。
+       * 
+       * ここが`undefined`である場合は、 `client.defaultNoteChannelVisibility` が優先されます。
+       */
         visibility : Visibility,
         visibleUserIds : Array<string>,
         cw : string | null,
@@ -181,19 +191,31 @@ export class Self implements MeDetailed {
         /**
          * # POLL
          * 
+         * 投票オブジェクトです。`CreatePoll` が使えます。
+         * 
          * See : [Misskey-hub](https://misskey-hub.net/docs/api/endpoints/notes/create.html)
          */
-        poll : {
-            choices : Array<string>
-            multiple : boolean
-            expiresAt : number
-            expiredAfter : number
-        }
+        poll : CreatePoll
     }>) { 
-        const Response = await GETPOST<Partial<NoteBody> & AccessToken, { createdNote : Note }>(
+        typeof configs !== "undefined" ? 
+            typeof configs.visibility !== "undefined" ? 
+                configs.visibility = this.client.defaultNoteChannelVisibility 
+            : configs.visibility 
+        : void 0
+
+        const poll = configs.poll.toJSON()
+        const NewConfig = configs
+        delete NewConfig["poll"]
+        const conf : NoteBody = Object.assign( NewConfig , { poll : poll } , { text : text } )  
+
+        const Response = await GETPOST<NoteBody & AccessToken, { createdNote : Note }>(
             `https://${this.client.getHost}/api/notes/create`,
-            Object.assign(configs, { text : text }, {i : this.client.token})
+            Object.assign(
+                conf,
+                {i : this.client.token}
+            )
         )
+
 
         return Response.data.createdNote
     }
