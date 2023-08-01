@@ -1,6 +1,7 @@
 import { Client } from "..";
 import { GETPOST } from "../posts/post";
 import { AccessToken, GlobalNoteIdParam } from "../types/reaction";
+import { WebSocketState } from "../types/wsState";
 import { Note } from "./message";
 import { TimeLineMessage } from "./timelineMessage";
 
@@ -15,7 +16,7 @@ export class Notes {
 
     async fetch( id : string ) : Promise<TimeLineMessage> {
         const Message = this.client.cache.get(id)
-        if(!Message) {
+        if(!Message && (this.client.state === WebSocketState.connected)) {
            const RESData = await GETPOST<AccessToken & GlobalNoteIdParam, Note>(`https://${this.client.getHost}/notes/show`, {
                 i : this.client.token,
                 noteId : id

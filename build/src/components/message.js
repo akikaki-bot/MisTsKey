@@ -57,23 +57,46 @@ class Note {
      */
     reply(text, configs) {
         return __awaiter(this, void 0, void 0, function* () {
-            // これはIf文つかえよ私
-            typeof configs !== "undefined" ?
-                typeof configs.visibility === "undefined" ?
-                    configs.visibility = this.client.defaultNoteChannelVisibility
-                    : configs.visibility
-                : void 0;
-            //ReplyIdの自動設定
             configs.replyId = this.replyId;
-            //投票関連の汚いコード
-            const poll = configs.poll.toJSON();
-            const NewConfig = configs;
-            delete NewConfig["poll"];
-            const conf = Object.assign(NewConfig, { poll: poll }, { text: text });
-            //ここまで 
+            const conf = this.CreateNoteFunction(text, configs);
             const Response = yield (0, post_1.GETPOST)(`https://${this.client.getHost}/api/notes/create`, Object.assign(conf, { i: this.client.token }));
             return Response.data;
         });
+    }
+    CreateNoteFunction(text, body) {
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l;
+        if (typeof body === "undefined") {
+            return {
+                text: text,
+                visibility: this.client.defaultNoteChannelVisibility,
+                visibleUserIds: [],
+                cw: null,
+                localOnly: false,
+                noExtractMentions: false,
+                noExtractEmojis: false,
+                noExtractHashtags: false,
+                replyId: null,
+                renoteId: null,
+                channelId: null,
+                poll: null
+            };
+        }
+        return {
+            text: text,
+            visibility: (_a = body.visibility) !== null && _a !== void 0 ? _a : this.client.defaultNoteChannelVisibility,
+            visibleUserIds: (_b = body.visibleUserIds) !== null && _b !== void 0 ? _b : [],
+            cw: (_c = body.cw) !== null && _c !== void 0 ? _c : null,
+            localOnly: (_d = body.localOnly) !== null && _d !== void 0 ? _d : false,
+            noExtractMentions: (_e = body.noExtractMentions) !== null && _e !== void 0 ? _e : false,
+            noExtractEmojis: (_f = body.noExtractEmojis) !== null && _f !== void 0 ? _f : false,
+            noExtractHashtags: (_g = body.noExtractHashtags) !== null && _g !== void 0 ? _g : false,
+            fileIds: body.fileIds,
+            mediaIds: body.mediaIds,
+            replyId: (_h = body.replyId) !== null && _h !== void 0 ? _h : null,
+            renoteId: (_j = body.renoteId) !== null && _j !== void 0 ? _j : null,
+            channelId: (_k = body.channelId) !== null && _k !== void 0 ? _k : null,
+            poll: (_l = body.poll.toJSON()) !== null && _l !== void 0 ? _l : null
+        };
     }
     /**
      * # Delete

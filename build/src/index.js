@@ -83,7 +83,10 @@ class Client extends base_1.BaseClient {
         typeof MoreOption !== "undefined" && typeof MoreOption.host !== "undefined"
             ? this.host = MoreOption.host
             : void 0;
-        this.defaultNoteChannelVisibility = MoreOption.defaultNoteChannel;
+        //Issue #3
+        typeof this.defaultNoteChannelVisibility !== "undefined" ?
+            this.defaultNoteChannelVisibility = MoreOption.defaultNoteChannel :
+            this.defaultNoteChannelVisibility = "public";
         this.id = (0, createUUID_1.createUuid)();
     }
     get getHost() {

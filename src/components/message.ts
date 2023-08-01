@@ -1,6 +1,6 @@
 import { Client } from ".."
 import { GETPOST, POST } from "../posts/post"
-import { NoteBody } from "../types/note"
+import { NoteBody, _NoteBody } from "../types/note"
 import { AccessToken } from "../types/reaction"
 import { CreatePoll } from "./createpoll"
 import { MisskeyUser, User } from "./user"
@@ -156,55 +156,11 @@ export class Note implements BaseNote {
      * await someMessage.reply('Reply Message', { visibility : "home" })
      * ```
      */
-    async reply( text : string | null , configs ?: Partial<{
-      /**
-       * # Visibility
-       * 
-       * 公開範囲を設定します。
-       * 
-       * ここの設定は `client.defaultNoteChannelVisibility` より優先されます。
-       * 
-       * ここが`undefined`である場合は、 `client.defaultNoteChannelVisibility` が優先されます。
-       */
-      visibility : Visibility,
-      visibleUserIds : Array<string>,
-      cw : string | null,
-      localOnly : boolean
-      noExtractMentions : boolean
-      noExtractHashtags : boolean
-      noExtractEmojis : boolean
-      fileIds : Array<string>
-      mediaIds : Array<string>
-      replyId : string 
-      renoteId : string
-      channelId : string
-      /**
-       * # POLL
-       * 
-       * class `CreatePoll` をご利用ください。
-       * 
-       * See : [Misskey-hub](https://misskey-hub.net/docs/api/endpoints/notes/create.html)
-       */
-      poll : CreatePoll
-    }>) { 
-        // これはIf文つかえよ私
-        typeof configs !== "undefined" ? 
-            typeof configs.visibility === "undefined" ? 
-                configs.visibility = this.client.defaultNoteChannelVisibility 
-            : configs.visibility 
-        : void 0
-
-        //ReplyIdの自動設定
+    async reply( text : string | null , configs ?: NoteBody) { 
         configs.replyId = this.replyId
+        const conf = this.CreateNoteFunction(text , configs)
 
-        //投票関連の汚いコード
-        const poll = configs.poll.toJSON()
-        const NewConfig = configs
-        delete NewConfig["poll"]
-        const conf : NoteBody = Object.assign( NewConfig , { poll : poll } , { text : text } ) 
-        //ここまで 
-
-        const Response = await GETPOST<NoteBody & AccessToken, { createdNote : Note }>(
+        const Response = await GETPOST<_NoteBody & AccessToken, { createdNote : Note }>(
             `https://${this.client.getHost}/api/notes/create`,
             Object.assign(
                 conf,
@@ -212,6 +168,41 @@ export class Note implements BaseNote {
             )
         )
       return Response.data
+    }
+
+    private CreateNoteFunction( text : string , body : NoteBody ) : _NoteBody {
+        if(typeof body === "undefined") {
+            return {
+                text : text,
+                visibility : this.client.defaultNoteChannelVisibility,
+                visibleUserIds : [],
+                cw : null,
+                localOnly : false,
+                noExtractMentions : false,
+                noExtractEmojis : false,
+                noExtractHashtags : false,
+                replyId : null,
+                renoteId : null,
+                channelId : null,
+                poll : null
+            }
+        }
+        return {
+           text : text,
+           visibility : body.visibility ?? this.client.defaultNoteChannelVisibility,
+           visibleUserIds : body.visibleUserIds ?? [],
+           cw : body.cw ?? null,
+           localOnly : body.localOnly ?? false,
+           noExtractMentions : body.noExtractMentions ?? false,
+           noExtractEmojis : body.noExtractEmojis ?? false,
+           noExtractHashtags : body.noExtractHashtags ?? false,
+           fileIds : body.fileIds,
+           mediaIds : body.mediaIds,
+           replyId : body.replyId ?? null,
+           renoteId : body.renoteId ?? null,
+           channelId : body.channelId ?? null,
+           poll : body.poll.toJSON() ?? null
+        }
     }
 
       /**

@@ -46,7 +46,7 @@ export class CreatePoll {
     }
 }
 
-interface Poll {
+export interface Poll {
     choices : string[]
     multiple : boolean
     expiresAt : number | null

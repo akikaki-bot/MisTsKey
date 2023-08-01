@@ -11,6 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Notes = void 0;
 const post_1 = require("../posts/post");
+const wsState_1 = require("../types/wsState");
 const timelineMessage_1 = require("./timelineMessage");
 // Client.Notes
 class Notes {
@@ -20,7 +21,7 @@ class Notes {
     fetch(id) {
         return __awaiter(this, void 0, void 0, function* () {
             const Message = this.client.cache.get(id);
-            if (!Message) {
+            if (!Message && (this.client.state === wsState_1.WebSocketState.connected)) {
                 const RESData = yield (0, post_1.GETPOST)(`https://${this.client.getHost}/notes/show`, {
                     i: this.client.token,
                     noteId: id

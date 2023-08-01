@@ -10,10 +10,9 @@ export declare class CreatePoll {
     setExpiresAfter(sec: number): this;
     toJSON(): Poll;
 }
-interface Poll {
+export interface Poll {
     choices: string[];
     multiple: boolean;
     expiresAt: number | null;
     expiredAfter: number | null;
 }
-export {};

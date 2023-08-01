@@ -146,7 +146,12 @@ export class Client extends BaseClient {
         ? this.host = MoreOption.host
         : void 0
 
-        this.defaultNoteChannelVisibility = MoreOption.defaultNoteChannel
+        //Issue #3
+        typeof this.defaultNoteChannelVisibility !== "undefined" ? 
+        this.defaultNoteChannelVisibility = MoreOption.defaultNoteChannel : 
+        this.defaultNoteChannelVisibility = "public"
+
+        
 
         this.id = createUuid()
     }
