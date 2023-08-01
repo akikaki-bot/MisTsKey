@@ -4,6 +4,7 @@ import { TimeLineMessage } from "./components/timelineMessage";
 import { Self } from "./components/self";
 import { Visibility } from "./components/message";
 import { WebSocketState } from "./types/wsState";
+import { Notes } from "./components/notes";
 /**
  * # Client
  *
@@ -37,6 +38,14 @@ export declare class Client extends BaseClient {
     private accessToken;
     token: string;
     /**
+     * # Notes
+     *
+     * ノートを取得に関する関数がそろっています。
+     *
+     * fetchなどgetなどは、すべてキャッシュを通し行うので一応負荷はかかりません。
+     */
+    notes: Notes;
+    /**
      * # State
      *
      * WebSocketの状態を表します。
@@ -59,7 +68,7 @@ export declare class Client extends BaseClient {
      *
      * noteIDで取得します。
      */
-    cache: Cache<string, any>;
+    cache: Cache<string, TimeLineMessage>;
     /**
      * # defaultNoteChannelVisibility
      *
@@ -118,6 +127,7 @@ export declare class Client extends BaseClient {
      * @deprecated
      */
     private _AccessTokenGetter;
+    private __InitLogin;
     private InitSelfUser;
     /**
      * # Login

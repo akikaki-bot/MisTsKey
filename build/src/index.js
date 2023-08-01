@@ -26,6 +26,7 @@ const timelineMessage_1 = require("./components/timelineMessage");
 const post_1 = require("./posts/post");
 const self_1 = require("./components/self");
 const wsState_1 = require("./types/wsState");
+const notes_1 = require("./components/notes");
 /**
  * # Client
  *
@@ -77,6 +78,7 @@ class Client extends base_1.BaseClient {
          *
          */
         this.defaultNoteChannelVisibility = "public";
+        this.notes = new notes_1.Notes(this);
         this.cache = new cache_1.Cache();
         typeof MoreOption !== "undefined" && typeof MoreOption.host !== "undefined"
             ? this.host = MoreOption.host
@@ -116,8 +118,12 @@ class Client extends base_1.BaseClient {
      */
     _AccessTokenGetter() {
         return __awaiter(this, void 0, void 0, function* () {
-            this.accessToken = this.token;
         });
+    }
+    __InitLogin(token) {
+        this.token = token;
+        this.accessToken = token;
+        this.state = wsState_1.WebSocketState.init;
     }
     InitSelfUser() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -140,10 +146,8 @@ class Client extends base_1.BaseClient {
      *
      */
     login(token) {
-        this.token = token;
-        this.state = wsState_1.WebSocketState.init;
+        this.__InitLogin(token);
         this.emit('debug', "[Streaming / Connecting] => " + this.host + " / token : " + this.token);
-        this._AccessTokenGetter();
         this.ws = new ws_1.default(`wss://${this.host}/streaming?i=${this.token}`);
         this.ws.onopen = () => {
             this.state = wsState_1.WebSocketState.connecting;

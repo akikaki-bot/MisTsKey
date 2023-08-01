@@ -15,8 +15,6 @@ export interface MessageBody {
     id: string;
     type: string;
     body: Note;
-    /** @deprecated Will be deleted */
-    IsRenoteMessage: boolean;
 }
 /**
  * # Note

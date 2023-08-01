@@ -12,11 +12,12 @@ import { createUuid } from "./utils/createUUID";
 import { TimeLineMessage } from "./components/timelineMessage";
 import { GoodbyWorld } from "./types/goodbyworld";
 import { GETPOST } from "./posts/post";
-import { AccessToken } from "./types/reaction";
+import { AccessToken, GlobalNoteIdParam } from "./types/reaction";
 import { Self } from "./components/self";
 import { Note, Visibility } from "./components/message";
 import { MeDetailed } from "./types/me";
 import { WebSocketState } from "./types/wsState";
+import { Notes } from "./components/notes";
 
 /**
  * # Client
@@ -53,6 +54,14 @@ export class Client extends BaseClient {
 
     public token : string
     /**
+     * # Notes
+     * 
+     * ノートを取得に関する関数がそろっています。
+     * 
+     * fetchなどgetなどは、すべてキャッシュを通し行うので一応負荷はかかりません。
+     */
+    public notes : Notes
+    /**
      * # State
      * 
      * WebSocketの状態を表します。
@@ -75,7 +84,7 @@ export class Client extends BaseClient {
      * 
      * noteIDで取得します。
      */
-    public cache : Cache<string, any>
+    public cache : Cache<string, TimeLineMessage>
     /**
      * # defaultNoteChannelVisibility
      * 
@@ -131,7 +140,8 @@ export class Client extends BaseClient {
     ) {
         super(channelType)
 
-        this.cache = new Cache<string, Note>()
+        this.notes = new Notes(this)
+        this.cache = new Cache<string, TimeLineMessage>()
         typeof MoreOption !== "undefined" && typeof MoreOption.host !== "undefined" 
         ? this.host = MoreOption.host
         : void 0
@@ -247,7 +257,7 @@ export class Client extends BaseClient {
         this.ws = new WebSocket(`wss://${this.host}/streaming?i=${this.token}`)
     }
 
-    
+
 }
 
 

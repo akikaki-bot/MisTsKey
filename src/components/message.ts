@@ -20,7 +20,7 @@ export interface MessageBody {
     type : string
     body : Note
     /** @deprecated Will be deleted */
-    IsRenoteMessage : boolean
+    //IsRenoteMessage : boolean
 }
 
 /**
