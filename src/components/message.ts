@@ -1,9 +1,8 @@
 import { Client } from ".."
-import { GETPOST, POST } from "../posts/post"
+import { GETPOST, POST } from "../posts"
 import { NoteBody, _NoteBody } from "../types/note"
 import { AccessToken } from "../types/reaction"
-import { CreatePoll } from "./createpoll"
-import { MisskeyUser, User } from "./user"
+import { MisskeyUser } from "./"
 
 export interface Message {
     type : "channel",

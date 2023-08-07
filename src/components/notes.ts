@@ -1,10 +1,13 @@
 import { Client } from "..";
-import { GETPOST } from "../posts/post";
+import { GETPOST } from "../posts";
 import { getMentionedNotesOption, searchNotesOption } from "../types";
 import { AccessToken, GlobalNoteIdParam } from "../types/reaction";
 import { WebSocketState } from "../types/wsState";
-import { BaseNote, Note } from "./message";
-import { TimeLineMessage } from "./timelineMessage";
+import { 
+    BaseNote, 
+    Note , 
+    TimeLineMessage 
+} from "./";
 
 // Client.Notes
 export class Notes {

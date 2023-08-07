@@ -5,19 +5,22 @@
 // I Love Misskey <3
 
 import WebSocket from "ws";
-import { BaseClient, ChannelType } from "./components/base";
 import { Cache } from "./types/cache";
 import { HelloWorld } from "./types/helloworld";
 import { createUuid } from "./utils/createUUID";
-import { TimeLineMessage } from "./components/timelineMessage";
 import { GoodbyWorld } from "./types/goodbyworld";
 import { GETPOST } from "./posts/post";
-import { AccessToken, GlobalNoteIdParam } from "./types/reaction";
-import { Self } from "./components/self";
-import { Note, Visibility } from "./components/message";
+import { AccessToken } from "./types/reaction";
 import { MeDetailed } from "./types/me";
 import { WebSocketState } from "./types/wsState";
-import { Notes } from "./components/notes";
+import {
+     BaseClient, 
+     ChannelType , 
+     Notes , 
+     Visibility , 
+     Self , 
+     TimeLineMessage
+} from "./components";
 
 /**
  * # Client

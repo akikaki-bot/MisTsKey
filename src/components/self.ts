@@ -1,11 +1,19 @@
 import { Client } from "..";
-import { GETPOST } from "../posts/post";
-import { Achievement, BadgeRole, Emojis, MeDetailed, Policies, Role } from "../types/me";
-import { NoteBody, _NoteBody } from "../types/note";
+import { GETPOST } from "../posts";
+import { 
+    Achievement, 
+    BadgeRole, 
+    Emojis, 
+    MeDetailed, 
+    Policies, 
+    Role 
+} from "../types/me";
+import {
+     NoteBody,
+     _NoteBody
+} from "../types/note";
 import { AccessToken } from "../types/reaction";
-import { Status, UserStatus } from "../types/stat";
-import { CreatePoll, Poll } from "./createpoll";
-import { Note, Visibility } from "./message";
+import { Note } from "./";
 
 
 /**
