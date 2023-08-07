@@ -1,8 +1,21 @@
 import { Client } from "..";
-import { GETPOST, POST } from "../posts/post";
-import { AccessToken, DeleteReaction, GetRenote, GlobalNoteIdParam, GlobalReNoteIdParam, Reaction } from "../types/reaction";
-import { BaseMisTskeyError, MisTsKeyError } from "./error";
-import { Message, Note } from "./message";
+import { 
+    GETPOST, 
+    POST 
+} from "../posts";
+import { 
+    AccessToken, 
+    DeleteReaction, 
+    GetRenote, 
+    GlobalNoteIdParam, 
+    GlobalReNoteIdParam, 
+    Reaction 
+} from "../types/reaction";
+import { 
+    BaseMisTskeyError ,
+    Message, 
+    Note
+} from "./";
 
 
 export class TimeLineMessage {

@@ -1,9 +1,7 @@
-import { AxiosResponse } from "axios"
 import { Client } from ".."
-import { GETPOST, POST } from "../posts/post"
+import { GETPOST } from "../posts"
 import { Follower } from "../types/follower"
 import { AccessToken } from "../types/reaction"
-import { Status, UserStatus } from "../types/stat"
 
 
 export interface User {
