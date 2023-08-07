@@ -1,5 +1,4 @@
-import { CreatePoll } from "../components/createpoll";
-import { Visibility } from "../components/message";
+import { CreatePoll, Visibility } from "../components";
 export type NoteBody = Omit<_NoteBody, "poll"> & {
     poll: CreatePoll;
 };

@@ -1,5 +1,4 @@
-import { ISO8601 } from "../components/message";
-import { Self } from "../components/self";
+import { ISO8601, Self } from "../components";
 export interface Follower {
     id: string;
     createAt: ISO8601;

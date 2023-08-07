@@ -1,7 +1,7 @@
 import { Client } from "..";
 import { Achievement, BadgeRole, Emojis, MeDetailed, Policies, Role } from "../types/me";
 import { NoteBody } from "../types/note";
-import { Note } from "./message";
+import { Note } from "./";
 /**
  * ## Self
  * -> implements MeDetailed

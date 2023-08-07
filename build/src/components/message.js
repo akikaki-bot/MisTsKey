@@ -10,8 +10,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Note = void 0;
-const post_1 = require("../posts/post");
-const user_1 = require("./user");
+const posts_1 = require("../posts");
+const _1 = require("./");
 class Note {
     constructor(note, client) {
         this.BodyId = note.BodyId;
@@ -19,7 +19,7 @@ class Note {
         this.id = note.id;
         this.createdAt = note.createdAt;
         this.userId = note.userId;
-        this.user = new user_1.MisskeyUser(note.user, client);
+        this.user = new _1.MisskeyUser(note.user, client);
         this.text = note.text;
         this.cw = note.cw;
         this.visibility = note.visibility;
@@ -59,7 +59,7 @@ class Note {
         return __awaiter(this, void 0, void 0, function* () {
             configs.replyId = this.replyId;
             const conf = this.CreateNoteFunction(text, configs);
-            const Response = yield (0, post_1.GETPOST)(`https://${this.client.getHost}/api/notes/create`, Object.assign(conf, { i: this.client.token }));
+            const Response = yield (0, posts_1.GETPOST)(`https://${this.client.getHost}/api/notes/create`, Object.assign(conf, { i: this.client.token }));
             return Response.data;
         });
     }
@@ -105,7 +105,7 @@ class Note {
      */
     delete() {
         return __awaiter(this, void 0, void 0, function* () {
-            yield (0, post_1.POST)(`https://${this.client.getHost}/api/notes/delete`, { i: this.client.token, noteId: this.id }).catch(() => {
+            yield (0, posts_1.POST)(`https://${this.client.getHost}/api/notes/delete`, { i: this.client.token, noteId: this.id }).catch(() => {
                 throw new Error('[Misskey.ts API Error] \n 削除できませんでした。');
             });
         });
