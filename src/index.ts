@@ -80,7 +80,7 @@ export class Client extends BaseClient {
     /**
      * # cache
      * 
-     * Misskeyから送られてきたデータのキャッシュです。
+     * TimeLineから送られてきたデータのキャッシュです。
      * 
      * noteIDで取得します。
      */
@@ -193,13 +193,6 @@ export class Client extends BaseClient {
 
     getAccessToken() {
         return this.accessToken
-    }
-
-    /**
-     * @deprecated
-     */
-    private async _AccessTokenGetter(){
-        
     }
 
     private __InitLogin( token : string ) {
