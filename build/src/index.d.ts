@@ -1,10 +1,6 @@
-import { BaseClient, ChannelType } from "./components/base";
 import { Cache } from "./types/cache";
-import { TimeLineMessage } from "./components/timelineMessage";
-import { Self } from "./components/self";
-import { Visibility } from "./components/message";
 import { WebSocketState } from "./types/wsState";
-import { Notes } from "./components/notes";
+import { BaseClient, ChannelType, Notes, Visibility, Self, TimeLineMessage } from "./components";
 /**
  * # Client
  *
@@ -64,7 +60,7 @@ export declare class Client extends BaseClient {
     /**
      * # cache
      *
-     * Misskeyから送られてきたデータのキャッシュです。
+     * TimeLineから送られてきたデータのキャッシュです。
      *
      * noteIDで取得します。
      */
@@ -123,10 +119,6 @@ export declare class Client extends BaseClient {
     private __sendHelloWorld;
     destory(): void;
     getAccessToken(): string;
-    /**
-     * @deprecated
-     */
-    private _AccessTokenGetter;
     private __InitLogin;
     private InitSelfUser;
     /**

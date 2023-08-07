@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MisskeyUser = void 0;
-const post_1 = require("../posts/post");
+const posts_1 = require("../posts");
 /**
  * ## MisskeyUser
  * -> implements User
@@ -35,7 +35,7 @@ class MisskeyUser {
     }
     getFollower(config) {
         return __awaiter(this, void 0, void 0, function* () {
-            const followers = yield (0, post_1.GETPOST)(`https://${this.client.getHost}/api/users/followers`, {
+            const followers = yield (0, posts_1.GETPOST)(`https://${this.client.getHost}/api/users/followers`, {
                 i: this.client.getAccessToken(),
                 sinceId: config.sinceId,
                 untilId: config.untilId,

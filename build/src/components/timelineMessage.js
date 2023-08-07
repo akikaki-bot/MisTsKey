@@ -10,12 +10,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TimeLineMessage = void 0;
-const post_1 = require("../posts/post");
-const message_1 = require("./message");
+const posts_1 = require("../posts");
+const _1 = require("./");
 class TimeLineMessage {
     constructor(data, client) {
         this.client = client;
-        this.message = new message_1.Note(data.body.body, client);
+        this.message = new _1.Note(data.body.body, client);
         this.message.BodyId = data.body.id;
         this.message.text === null ? this.message.IsRenoteMessage = true : this.message.IsRenoteMessage = false;
     }
@@ -29,7 +29,7 @@ class TimeLineMessage {
     renote(config) {
         return __awaiter(this, void 0, void 0, function* () {
             const NoteId = config ? config.noteId ? config.noteId : this.message.id : this.message.id;
-            const data = yield (0, post_1.GETPOST)(`https://${this.client.getHost}/api/notes/create`, {
+            const data = yield (0, posts_1.GETPOST)(`https://${this.client.getHost}/api/notes/create`, {
                 i: this.client.token,
                 renoteId: NoteId
             });
@@ -46,7 +46,7 @@ class TimeLineMessage {
     unRenote(config) {
         return __awaiter(this, void 0, void 0, function* () {
             const NoteId = config ? config.noteId ? config.noteId : this.message.id : this.message.id;
-            yield (0, post_1.POST)(`https://${this.client.getHost}/api/notes/unrenote`, {
+            yield (0, posts_1.POST)(`https://${this.client.getHost}/api/notes/unrenote`, {
                 i: this.client.token,
                 renoteId: NoteId
             });
@@ -68,7 +68,7 @@ class TimeLineMessage {
     getRenote(config) {
         return __awaiter(this, void 0, void 0, function* () {
             const NoteId = config.noteId ? config.noteId : this.message.id;
-            const data = yield (0, post_1.GETPOST)(`https://${this.client.getHost}/api/notes/renotes`, {
+            const data = yield (0, posts_1.GETPOST)(`https://${this.client.getHost}/api/notes/renotes`, {
                 i: this.client.token,
                 noteId: NoteId,
                 limit: config.limit,
@@ -79,25 +79,25 @@ class TimeLineMessage {
         });
     }
     /**
-     * # Like
+     * # favoriteCreate
      *
-     * このメッセージをLikeします。
+     * このメッセージをお気に入りにします。
      */
-    like() {
+    favoriteCreate() {
         return __awaiter(this, void 0, void 0, function* () {
             const NoteId = this.message.id;
-            yield (0, post_1.POST)(`https://${this.client.getHost}/api/pages/like`, { i: this.client.token, noteId: NoteId });
+            yield (0, posts_1.POST)(`https://${this.client.getHost}/api/favorites/create`, { i: this.client.token, noteId: NoteId });
         });
     }
     /**
-     * # unLike
+     * # favoriteDelete
      *
-     * このメッセージを unLike します。
+     * このメッセージのお気に入りを解除します。
      */
-    unLike() {
+    favoriteDelete() {
         return __awaiter(this, void 0, void 0, function* () {
             const NoteId = this.message.id;
-            yield (0, post_1.POST)(`https://${this.client.getHost}/api/pages/unlike`, { i: this.client.token, noteId: NoteId });
+            yield (0, posts_1.POST)(`https://${this.client.getHost}/api/favorites/delete`, { i: this.client.token, noteId: NoteId });
         });
     }
     /**
@@ -111,7 +111,7 @@ class TimeLineMessage {
     reaction(reactionEmoji) {
         return __awaiter(this, void 0, void 0, function* () {
             const NoteId = this.message.id;
-            yield (0, post_1.POST)(`https://${this.client.getHost}/api/notes/reactions/create`, {
+            yield (0, posts_1.POST)(`https://${this.client.getHost}/api/notes/reactions/create`, {
                 i: this.client.token,
                 noteId: NoteId,
                 reaction: reactionEmoji
@@ -129,7 +129,7 @@ class TimeLineMessage {
     reactionDelete() {
         return __awaiter(this, void 0, void 0, function* () {
             const NoteId = this.message.id;
-            yield (0, post_1.POST)(`https://${this.client.getHost}/api/notes/reactions/delete`, {
+            yield (0, posts_1.POST)(`https://${this.client.getHost}/api/notes/reactions/delete`, {
                 i: this.client.token,
                 noteId: NoteId,
             });

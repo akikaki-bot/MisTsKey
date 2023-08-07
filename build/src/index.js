@@ -19,14 +19,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Client = void 0;
 const ws_1 = __importDefault(require("ws"));
-const base_1 = require("./components/base");
 const cache_1 = require("./types/cache");
 const createUUID_1 = require("./utils/createUUID");
-const timelineMessage_1 = require("./components/timelineMessage");
 const post_1 = require("./posts/post");
-const self_1 = require("./components/self");
 const wsState_1 = require("./types/wsState");
-const notes_1 = require("./components/notes");
+const components_1 = require("./components");
 /**
  * # Client
  *
@@ -53,7 +50,7 @@ const notes_1 = require("./components/notes");
  * })
  * ```
  */
-class Client extends base_1.BaseClient {
+class Client extends components_1.BaseClient {
     constructor(
     /**
      * ## ChannelType
@@ -78,7 +75,7 @@ class Client extends base_1.BaseClient {
          *
          */
         this.defaultNoteChannelVisibility = "public";
-        this.notes = new notes_1.Notes(this);
+        this.notes = new components_1.Notes(this);
         this.cache = new cache_1.Cache();
         typeof MoreOption !== "undefined" && typeof MoreOption.host !== "undefined"
             ? this.host = MoreOption.host
@@ -116,13 +113,6 @@ class Client extends base_1.BaseClient {
     getAccessToken() {
         return this.accessToken;
     }
-    /**
-     * @deprecated
-     */
-    _AccessTokenGetter() {
-        return __awaiter(this, void 0, void 0, function* () {
-        });
-    }
     __InitLogin(token) {
         this.token = token;
         this.accessToken = token;
@@ -132,7 +122,7 @@ class Client extends base_1.BaseClient {
         return __awaiter(this, void 0, void 0, function* () {
             this.emit('debug', "[API / Getting] Client User [HOST] => " + this.host + " / token : " + this.token);
             (0, post_1.GETPOST)(`https://${this.host}/api/i`, { i: this.token }).then((self) => {
-                this.i = new self_1.Self(self.data, this);
+                this.i = new components_1.Self(self.data, this);
                 this.emit('ready', () => { });
                 this.state = wsState_1.WebSocketState.connected;
             });
@@ -160,7 +150,7 @@ class Client extends base_1.BaseClient {
         };
         this.ws.onmessage = (msg) => {
             const message = JSON.parse(msg.data);
-            const MessageClass = new timelineMessage_1.TimeLineMessage(message, this);
+            const MessageClass = new components_1.TimeLineMessage(message, this);
             if (typeof MessageClass.message.text !== "string")
                 return;
             this.emit("timelineCreate", MessageClass);

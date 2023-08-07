@@ -1,6 +1,6 @@
 import { Client } from "..";
 import { NoteBody } from "../types/note";
-import { MisskeyUser } from "./user";
+import { MisskeyUser } from "./";
 export interface Message {
     type: "channel";
     body: MessageBody;

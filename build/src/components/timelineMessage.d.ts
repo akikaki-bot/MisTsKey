@@ -1,5 +1,5 @@
 import { Client } from "..";
-import { Message, Note } from "./message";
+import { Message, Note } from "./";
 export declare class TimeLineMessage {
     /**
      * ## message
@@ -49,17 +49,17 @@ export declare class TimeLineMessage {
         untilId: string;
     }>): Promise<Note[]>;
     /**
-     * # Like
+     * # favoriteCreate
      *
-     * このメッセージをLikeします。
+     * このメッセージをお気に入りにします。
      */
-    like(): Promise<void>;
+    favoriteCreate(): Promise<void>;
     /**
-     * # unLike
+     * # favoriteDelete
      *
-     * このメッセージを unLike します。
+     * このメッセージのお気に入りを解除します。
      */
-    unLike(): Promise<void>;
+    favoriteDelete(): Promise<void>;
     /**
      * # Reaction
      * このメッセージにリアクションをします。
