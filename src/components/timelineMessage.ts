@@ -80,23 +80,23 @@ export class TimeLineMessage {
     }
 
     /**
-     * # Like
+     * # favoriteCreate
      * 
-     * このメッセージをLikeします。
+     * このメッセージをお気に入りにします。
      */
-    async like() {
+    async favoriteCreate() {
         const NoteId = this.message.id
-        await POST<GlobalNoteIdParam & AccessToken>(`https://${this.client.getHost}/api/pages/like`, {i : this.client.token , noteId : NoteId})
+        await POST<GlobalNoteIdParam & AccessToken>(`https://${this.client.getHost}/api/favorites/create`, {i : this.client.token , noteId : NoteId })
     }
 
     /**
-     * # unLike
+     * # favoriteDelete
      * 
-     * このメッセージを unLike します。
+     * このメッセージのお気に入りを解除します。
      */
-    async unLike() {
+    async favoriteDelete() {
         const NoteId = this.message.id
-        await POST<GlobalNoteIdParam & AccessToken>(`https://${this.client.getHost}/api/pages/unlike`, {i : this.client.token , noteId : NoteId})
+        await POST<GlobalNoteIdParam & AccessToken>(`https://${this.client.getHost}/api/favorites/delete`, {i : this.client.token , noteId : NoteId})
     }
 
 
