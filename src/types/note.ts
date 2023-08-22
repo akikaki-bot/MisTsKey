@@ -1,7 +1,7 @@
 import { 
-    CreatePoll , 
-    Visibility 
-} from "../components"
+	CreatePoll , 
+	Visibility 
+} from "../components";
 
 export type NoteBody = Omit<_NoteBody, "poll"> & { poll : CreatePoll } 
 export interface _NoteBody {

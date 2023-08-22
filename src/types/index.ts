@@ -1,4 +1,4 @@
-import { Visibility } from "../components"
+import { Visibility } from "../components";
 
 export interface getMentionedNotesOption {
     following : boolean

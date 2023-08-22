@@ -14,12 +14,12 @@ import { AccessToken } from "./types/reaction";
 import { MeDetailed } from "./types/me";
 import { WebSocketState } from "./types/wsState";
 import {
-     BaseClient, 
-     ChannelType , 
-     Notes , 
-     Visibility , 
-     Self , 
-     TimeLineMessage
+	BaseClient, 
+	ChannelType , 
+	Notes , 
+	Visibility , 
+	Self , 
+	TimeLineMessage
 } from "./components";
 
 /**
@@ -48,23 +48,23 @@ import {
  * })
  * ```
  */
-export class Client extends BaseClient {
+export class Client extends BaseClient implements ClientEvents {
 
-    private ws : WebSocket
-    private host : string = "misskey.io"
-    private id : string 
-    private accessToken : string
+	private ws : WebSocket;
+	private host : string = "misskey.io";
+	private id : string; 
+	private accessToken : string;
 
-    public token : string
-    /**
+	public token : string;
+	/**
      * # Notes
      * 
      * ノートを取得に関する関数がそろっています。
      * 
      * fetchなどgetなどは、すべてキャッシュを通し行うので一応負荷はかかりません。
      */
-    public notes : Notes
-    /**
+	public notes : Notes;
+	/**
      * # State
      * 
      * WebSocketの状態を表します。
@@ -72,23 +72,23 @@ export class Client extends BaseClient {
      * enum : `WebSocketState`
      * 
      */
-    public state : WebSocketState
-    /**
+	public state : WebSocketState;
+	/**
      * # i
      * 
      * 自分自身（アクセストークンユーザー）についてのオブジェクトです。
      * 
      */
-    public i : Self
-    /**
+	public i : Self;
+	/**
      * # cache
      * 
      * TimeLineから送られてきたデータのキャッシュです。
      * 
      * noteIDで取得します。
      */
-    public cache : Cache<string, TimeLineMessage>
-    /**
+	public cache : Cache<string, TimeLineMessage>;
+	/**
      * # defaultNoteChannelVisibility
      * 
      * ノートの公開範囲を設定します。
@@ -96,22 +96,22 @@ export class Client extends BaseClient {
      * @readonly
      * 
      */
-    public readonly defaultNoteChannelVisibility : Visibility = "public"
+	public readonly defaultNoteChannelVisibility : Visibility = "public";
 
 
-    constructor(        
-        /**
+	constructor(        
+		/**
          * ## ChannelType
          * 
          *  See On : [Misskey Hub](https://misskey-hub.net/docs/api/streaming/channel/)
          */
-        channelType : ChannelType , 
-        /**
+		channelType : ChannelType , 
+		/**
          * ## オプション
          * 
          * ホスト名等詳細な設定が出来ます。
          */
-        MoreOption ?: {
+		MoreOption ?: {
             /**
              * # MoreOption.host 
              * Host名を決定します。
@@ -140,81 +140,81 @@ export class Client extends BaseClient {
              */
             defaultNoteChannel ?: Visibility
         }
-    ) {
-        super(channelType)
+	) {
+		super(channelType);
 
-        this.notes = new Notes(this)
-        this.cache = new Cache<string, TimeLineMessage>()
-        typeof MoreOption !== "undefined" && typeof MoreOption.host !== "undefined" 
-        ? this.host = MoreOption.host
-        : void 0
+		this.notes = new Notes(this);
+		this.cache = new Cache<string, TimeLineMessage>();
+		typeof MoreOption !== "undefined" && typeof MoreOption.host !== "undefined" 
+			? this.host = MoreOption.host
+			: void 0;
 
-        //Issue #3
-        typeof this.defaultNoteChannelVisibility !== "undefined" ? 
-        this.defaultNoteChannelVisibility = MoreOption.defaultNoteChannel : 
-        this.defaultNoteChannelVisibility = "public"
+		//Issue #3
+		typeof this.defaultNoteChannelVisibility !== "undefined" ? 
+			this.defaultNoteChannelVisibility = MoreOption.defaultNoteChannel : 
+			this.defaultNoteChannelVisibility = "public";
 
         
 
-        this.id = createUuid()
-    }
+		this.id = createUuid();
+	}
 
-    get getHost() {
-        return this.host
-    }
+	get getHost() {
+		return this.host;
+	}
 
-    private __sendHelloWorld() {
-        this.emit('debug', "[Streaming / SendHelloWorld] => "+this.host+" / token : "+this.token)
+	private __sendHelloWorld() {
+		this.emit("debug", "[Streaming / SendHelloWorld] => "+this.host+" / token : "+this.token);
 
-        const Message : HelloWorld = {
-            type : "connect",
-            body : {
-                channel : this.channelType,
-                id : this.id
-            }
-        };
+		const Message : HelloWorld = {
+			type : "connect",
+			body : {
+				channel : this.channelType,
+				id : this.id
+			}
+		};
 
-        this.ws.send(
-            JSON.stringify(Message)
-        )
-    }
+		this.ws.send(
+			JSON.stringify(Message)
+		);
+	}
 
-    destory() {
-        this.emit('debug', "[Streaming / GoodbyWorld] => "+this.host+" / token : "+this.token)
+	destory() {
+		this.emit("debug", "[Streaming / GoodbyWorld] => "+this.host+" / token : "+this.token);
 
-        const Message : GoodbyWorld = {
-            type : "disconnect",
-            body : {
-                id : this.id
-            }
-        };
+		const Message : GoodbyWorld = {
+			type : "disconnect",
+			body : {
+				id : this.id
+			}
+		};
 
-        this.ws.send(
-            JSON.stringify(Message)
-        )
-    }
+		this.ws.send(
+			JSON.stringify(Message)
+		);
+	}
 
-    getAccessToken() {
-        return this.accessToken
-    }
+	getAccessToken() {
+		return this.accessToken;
+	}
 
-    private __InitLogin( token : string ) {
-        this.token = token
-        this.accessToken = token
-        this.state = WebSocketState.init
-    }
+	private __InitLogin( token : string ) {
+		this.token = token;
+		this.accessToken = token;
+		this.state = WebSocketState.init;
+	}
 
-    private async InitSelfUser() {
-        this.emit('debug', "[API / Getting] Client User [HOST] => "+this.host+" / token : "+this.token)
+	private async InitSelfUser() {
+		this.emit("debug", "[API / Getting] Client User [HOST] => "+this.host+" / token : "+this.token);
 
-       GETPOST<AccessToken, MeDetailed>(`https://${this.host}/api/i`, {i : this.token}).then((self) => {
-            this.i = new Self(self.data, this)
-            this.emit('ready', () => {})
-            this.state = WebSocketState.connected
-       })
-    }
+		GETPOST<AccessToken, MeDetailed>(`https://${this.host}/api/i`, {i : this.token}).then((self) => {
+			this.i = new Self(self.data, this);
+			this.emit("ready", () => {});
+			this.state = WebSocketState.connected;
+		});
+	}
 
-    /**
+	/**
      * # Login
      * -> Method
      * 
@@ -224,46 +224,46 @@ export class Client extends BaseClient {
      * @param {string} token アクセストークンを入力してください。
      * 
      */
-    login(token : string) {
-        this.__InitLogin(token)
+	login(token : string) {
+		this.__InitLogin(token);
 
-        this.emit('debug', "[Streaming / Connecting] => "+this.host+" / token : "+this.token)
-        this.ws = new WebSocket(`wss://${this.host}/streaming?i=${this.token}`)
+		this.emit("debug", "[Streaming / Connecting] => "+this.host+" / token : "+this.token);
+		this.ws = new WebSocket(`wss://${this.host}/streaming?i=${this.token}`);
         
-        this.ws.onopen = () => {
-            this.state = WebSocketState.connecting
-            this.emit('debug', `[Streaming / Successfully] => ${this.host} / Successfully connect!`)
-            this.__sendHelloWorld()
-            this.InitSelfUser()
-        }
+		this.ws.onopen = () => {
+			this.state = WebSocketState.connecting;
+			this.emit("debug", `[Streaming / Successfully] => ${this.host} / Successfully connect!`);
+			this.__sendHelloWorld();
+			this.InitSelfUser();
+		};
+		// eslint-disable-next-line
+		this.ws.onmessage = ( msg : any ) => {
+			const message = JSON.parse(msg.data);
+			const MessageClass = new TimeLineMessage(message, this);
+			if(typeof MessageClass.message.text !== "string") return;
 
-        this.ws.onmessage = ( msg : any ) => {
-            const message = JSON.parse(msg.data)
-            const MessageClass = new TimeLineMessage(message, this)
-            if(typeof MessageClass.message.text !== "string") return;
+			this.emit("timelineCreate", MessageClass);
+			typeof message.body !== "undefined" ? this.cache.set(MessageClass.message.id, MessageClass) : void 0;
+		};
 
-            this.emit("timelineCreate", MessageClass)
-            typeof message.body !== "undefined" ? this.cache.set(MessageClass.message.id, MessageClass) : void 0
-        }
+		this.ws.onclose = () => {
+			this.emit("debug" , "[Streaming / ReConnecting] => Function Logining...");
+			this.state = WebSocketState.reconnecting;
+			this.ws = void 0;
+			this.login(this.token);
+		};
+	}
 
-        this.ws.onclose = () => {
-            this.emit('debug' , "[Streaming / ReConnecting] => Function Logining...")
-            this.state = WebSocketState.reconnecting
-            this.ws = void 0
-            this.login(this.token)
-        }
-    }
-
-    reconnect()  {
-        this.ws = new WebSocket(`wss://${this.host}/streaming?i=${this.token}`)
-    }
+	reconnect()  {
+		this.ws = new WebSocket(`wss://${this.host}/streaming?i=${this.token}`);
+	}
 
 
 }
 
 
-export declare interface Client {
-    on(event : 'debug', listener: ( data: string ) => void): this
+export interface ClientEvents {
+    on(event : "debug", listener: ( data: string ) => void): this
     on(event : "timelineCreate", listener : (data : TimeLineMessage) => void) : this
     /**
      * @deprecated

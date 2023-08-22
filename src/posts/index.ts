@@ -1,4 +1,4 @@
 export {
-    POST,
-    GETPOST
-} from "./post"
+	POST,
+	GETPOST
+} from "./post";

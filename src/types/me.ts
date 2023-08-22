@@ -29,11 +29,14 @@ export interface MeDetailed {
     location:                        string | null;
     birthday:                        string | null;
     lang:                            string | null;
+    //eslint-disable-next-line
     fields:                          any[];
     followersCount:                  number;
     followingCount:                  number;
     notesCount:                      number;
+    //eslint-disable-next-line
     pinnedNoteIds:                   any[];
+    //eslint-disable-next-line
     pinnedNotes:                     any[];
     pinnedPageId:                    string | null;
     pinnedPage:                      string | null;
@@ -66,8 +69,11 @@ export interface MeDetailed {
     hasUnreadChannel:                boolean;
     hasUnreadNotification:           boolean;
     hasPendingReceivedFollowRequest: boolean;
+    //eslint-disable-next-line
     mutedWords:                      any[];
+    //eslint-disable-next-line
     mutedInstances:                  any[];
+    //eslint-disable-next-line
     mutingNotificationTypes:         any[];
     emailNotificationTypes:          string[];
     achievements:                    Achievement[];

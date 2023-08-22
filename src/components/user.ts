@@ -1,7 +1,7 @@
-import { Client } from ".."
-import { GETPOST } from "../posts"
-import { Follower } from "../types/follower"
-import { AccessToken } from "../types/reaction"
+import { Client } from "..";
+import { GETPOST } from "../posts";
+import { Follower } from "../types/follower";
+import { AccessToken } from "../types/reaction";
 
 
 export interface User {
@@ -35,42 +35,42 @@ export type onlineStatus = "online" | "active" | "offline" | "unknown"
  */
 export class MisskeyUser implements User {
 
-    id : string
-    createdAt : string
-    username : string
-    host : string | null
-    name : string
-    onlineStatus : onlineStatus
-    avaterUrl : string
-    avaterBlurhash : string
+	id : string;
+	createdAt : string;
+	username : string;
+	host : string | null;
+	name : string;
+	onlineStatus : onlineStatus;
+	avaterUrl : string;
+	avaterBlurhash : string;
 
-    private client : Client
+	private client : Client;
 
-    constructor(user : User , client ?: Client) {
-        this.id = user.id
-        this.createdAt = user.createdAt
-        this.username = user.username
-        this.host = user.host
-        this.name = user.name
-        this.onlineStatus = user.onlineStatus
-        this.avaterUrl = user.avaterUrl
-        this.avaterBlurhash = user.avaterBlurhash
-        this.client = client
-    }
+	constructor(user : User , client ?: Client) {
+		this.id = user.id;
+		this.createdAt = user.createdAt;
+		this.username = user.username;
+		this.host = user.host;
+		this.name = user.name;
+		this.onlineStatus = user.onlineStatus;
+		this.avaterUrl = user.avaterUrl;
+		this.avaterBlurhash = user.avaterBlurhash;
+		this.client = client;
+	}
 
-    async getFollower( config ?: Following) : Promise<Follower[] | []> {
-        const followers = await GETPOST<AccessToken & Following, Follower[]>(`https://${this.client.getHost}/api/users/followers`, {
-             i : this.client.getAccessToken(),
-             sinceId : config.sinceId,
-             untilId : config.untilId,
-             limit : config.limit
-        })
-        const UserData = followers.data
+	async getFollower( config ?: Following) : Promise<Follower[] | []> {
+		const followers = await GETPOST<AccessToken & Following, Follower[]>(`https://${this.client.getHost}/api/users/followers`, {
+			i : this.client.getAccessToken(),
+			sinceId : config.sinceId,
+			untilId : config.untilId,
+			limit : config.limit
+		});
+		const UserData = followers.data;
 
-        return UserData
-    }
+		return UserData;
+	}
 
-    /*
+	/*
     async getStatus () : Promise<UserStatus>{
         const stat = await GETPOST<{userId : string}, Status>(`https://${this.client.getHost}/api/users/stats`, {
             userId : this.id
