@@ -21,7 +21,6 @@ export interface GetRenote {
     untilId : string
 }
 
-
 export interface AccessToken {
     i : string
 }

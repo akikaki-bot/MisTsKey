@@ -99,14 +99,14 @@ class Note {
         };
     }
     /**
-     * # Delete
-     *
-     * このノートを消去します。
-     */
+       * # Delete
+       *
+       * このノートを消去します。
+       */
     delete() {
         return __awaiter(this, void 0, void 0, function* () {
             yield (0, posts_1.POST)(`https://${this.client.getHost}/api/notes/delete`, { i: this.client.token, noteId: this.id }).catch(() => {
-                throw new Error('[Misskey.ts API Error] \n 削除できませんでした。');
+                throw new Error("[Misskey.ts API Error] \n 削除できませんでした。");
             });
         });
     }

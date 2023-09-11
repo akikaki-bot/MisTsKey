@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.GETPOST = exports.POST = void 0;
 const axios_1 = __importDefault(require("axios"));
 const error_1 = require("../components/error");
+//eslint-disable-next-line
 function POST(path, data) {
     return __awaiter(this, void 0, void 0, function* () {
         return axios_1.default.post(path, data)

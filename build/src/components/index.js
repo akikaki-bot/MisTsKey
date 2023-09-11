@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.MisskeyUser = exports.TimeLineMessage = exports.Self = exports.Notes = exports.Note = exports.MisTsKeyError = exports.CreatePoll = exports.BaseClient = void 0;
+exports.Instance = exports.MisskeyUser = exports.TimeLineMessage = exports.Self = exports.Notes = exports.Note = exports.MisTsKeyError = exports.CreatePoll = exports.BaseClient = void 0;
 var base_1 = require("./base");
 Object.defineProperty(exports, "BaseClient", { enumerable: true, get: function () { return base_1.BaseClient; } });
 var createpoll_1 = require("./createpoll");
@@ -17,3 +17,5 @@ var timelineMessage_1 = require("./timelineMessage");
 Object.defineProperty(exports, "TimeLineMessage", { enumerable: true, get: function () { return timelineMessage_1.TimeLineMessage; } });
 var user_1 = require("./user");
 Object.defineProperty(exports, "MisskeyUser", { enumerable: true, get: function () { return user_1.MisskeyUser; } });
+var instance_1 = require("./instance");
+Object.defineProperty(exports, "Instance", { enumerable: true, get: function () { return instance_1.Instance; } });

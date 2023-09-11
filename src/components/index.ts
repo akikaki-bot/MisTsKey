@@ -26,3 +26,6 @@ export {
 	onlineStatus,
 	MisskeyUser
 } from "./user";
+export {
+	Instance
+} from "./instance";

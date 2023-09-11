@@ -1,6 +1,6 @@
 import { Cache } from "./types/cache";
 import { WebSocketState } from "./types/wsState";
-import { BaseClient, ChannelType, Notes, Visibility, Self, TimeLineMessage } from "./components";
+import { BaseClient, ChannelType, Notes, Visibility, Self, TimeLineMessage, Instance } from "./components";
 /**
  * # Client
  *
@@ -27,7 +27,7 @@ import { BaseClient, ChannelType, Notes, Visibility, Self, TimeLineMessage } fro
  * })
  * ```
  */
-export declare class Client extends BaseClient {
+export declare class Client extends BaseClient implements ClientEvents {
     private ws;
     private host;
     private id;
@@ -74,6 +74,12 @@ export declare class Client extends BaseClient {
      *
      */
     readonly defaultNoteChannelVisibility: Visibility;
+    /**
+     * # instance
+     *
+     * インスタンスの稼働サーバーの情報について取得します。
+     */
+    instance: Instance;
     constructor(
     /**
      * ## ChannelType
@@ -116,6 +122,7 @@ export declare class Client extends BaseClient {
         defaultNoteChannel?: Visibility;
     });
     get getHost(): string;
+    private InitIncetance;
     private __sendHelloWorld;
     destory(): void;
     getAccessToken(): string;
@@ -134,8 +141,8 @@ export declare class Client extends BaseClient {
     login(token: string): void;
     reconnect(): void;
 }
-export declare interface Client {
-    on(event: 'debug', listener: (data: string) => void): this;
+export interface ClientEvents {
+    on(event: "debug", listener: (data: string) => void): this;
     on(event: "timelineCreate", listener: (data: TimeLineMessage) => void): this;
     /**
      * @deprecated

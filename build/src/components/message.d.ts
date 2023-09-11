@@ -125,9 +125,9 @@ export declare class Note implements BaseNote {
     }>;
     private CreateNoteFunction;
     /**
-     * # Delete
-     *
-     * このノートを消去します。
-     */
+       * # Delete
+       *
+       * このノートを消去します。
+       */
     delete(): Promise<void>;
 }

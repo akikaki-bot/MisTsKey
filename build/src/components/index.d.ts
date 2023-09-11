@@ -6,3 +6,4 @@ export { Notes } from "./notes";
 export { Self } from "./self";
 export { TimeLineMessage } from "./timelineMessage";
 export { User, Following, onlineStatus, MisskeyUser } from "./user";
+export { Instance } from "./instance";

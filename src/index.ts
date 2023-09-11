@@ -19,7 +19,8 @@ import {
 	Notes , 
 	Visibility , 
 	Self , 
-	TimeLineMessage
+	TimeLineMessage,
+	Instance
 } from "./components";
 
 /**
@@ -98,6 +99,13 @@ export class Client extends BaseClient implements ClientEvents {
      */
 	public readonly defaultNoteChannelVisibility : Visibility = "public";
 
+	/**
+	 * # instance
+	 * 
+	 * インスタンスの稼働サーバーの情報について取得します。
+	 */
+	public instance : Instance;
+
 
 	constructor(        
 		/**
@@ -161,6 +169,10 @@ export class Client extends BaseClient implements ClientEvents {
 
 	get getHost() {
 		return this.host;
+	}
+
+	private InitIncetance() {
+		this.instance = new Instance(this);
 	}
 
 	private __sendHelloWorld() {
@@ -235,6 +247,7 @@ export class Client extends BaseClient implements ClientEvents {
 			this.emit("debug", `[Streaming / Successfully] => ${this.host} / Successfully connect!`);
 			this.__sendHelloWorld();
 			this.InitSelfUser();
+			this.InitIncetance();
 		};
 		// eslint-disable-next-line
 		this.ws.onmessage = ( msg : any ) => {
