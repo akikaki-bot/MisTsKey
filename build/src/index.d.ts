@@ -27,7 +27,7 @@ import { BaseClient, ChannelType, Notes, Visibility, Self, TimeLineMessage, Inst
  * })
  * ```
  */
-export declare class Client extends BaseClient implements ClientEvents {
+export declare class Client extends BaseClient {
     private ws;
     private host;
     private id;
@@ -141,7 +141,7 @@ export declare class Client extends BaseClient implements ClientEvents {
     login(token: string): void;
     reconnect(): void;
 }
-export interface ClientEvents {
+export declare interface Client {
     on(event: "debug", listener: (data: string) => void): this;
     on(event: "timelineCreate", listener: (data: TimeLineMessage) => void): this;
     /**

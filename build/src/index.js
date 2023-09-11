@@ -50,6 +50,7 @@ const components_1 = require("./components");
  * })
  * ```
  */
+// eslint-disable-next-line
 class Client extends components_1.BaseClient {
     constructor(
     /**

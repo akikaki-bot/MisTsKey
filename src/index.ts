@@ -22,7 +22,6 @@ import {
 	TimeLineMessage,
 	Instance
 } from "./components";
-
 /**
  * # Client
  * 
@@ -49,7 +48,8 @@ import {
  * })
  * ```
  */
-export class Client extends BaseClient implements ClientEvents {
+// eslint-disable-next-line
+export class Client extends BaseClient {
 
 	private ws : WebSocket;
 	private host : string = "misskey.io";
@@ -274,8 +274,8 @@ export class Client extends BaseClient implements ClientEvents {
 
 }
 
-
-export interface ClientEvents {
+// eslint-disable-next-line
+export declare interface Client {
     on(event : "debug", listener: ( data: string ) => void): this
     on(event : "timelineCreate", listener : (data : TimeLineMessage) => void) : this
     /**
