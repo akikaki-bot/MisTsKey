@@ -177,7 +177,7 @@ export class Self implements MeDetailed {
 		this.policies = user.policies;
 	}
 
-	async note( text : string | null , configs ?: NoteBody ) { 
+	async note( text : string | null , configs ?: NoteBody ) : Promise<Note> { 
 
 		const conf = this.CreateNoteFunction(text ,configs);
 		const Response = await GETPOST<_NoteBody & AccessToken, { createdNote : Note }>(
@@ -187,7 +187,7 @@ export class Self implements MeDetailed {
 				{i : this.client.token}
 			)
 		);
-		return Response.data.createdNote;
+		return new Note(Response.data.createdNote);
 	}
 
 	private CreateNoteFunction( text : string , body : NoteBody ) : _NoteBody {
@@ -223,6 +223,14 @@ export class Self implements MeDetailed {
 			channelId : body.channelId ?? null,
 			poll : body.poll.toJSON() ?? null
 		};
+	}
+
+	async getRecommendation( limit ?: number , offset ?: number ) : Promise<MeDetailed[]> {
+		const Response = await GETPOST<AccessToken & { limit : number , offset : number }, MeDetailed[]>(`https://${this.client.getHost}/api/users/recommend`,
+			{ i : this.client.token, limit : limit , offset : offset }
+		);
+
+		return Response.data;
 	}
 
 	/*

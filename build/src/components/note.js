@@ -11,7 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Note = void 0;
 const posts_1 = require("../posts");
-const _1 = require("./");
+const _1 = require(".");
 class Note {
     constructor(note, client) {
         this.BodyId = note.BodyId;
@@ -38,6 +38,7 @@ class Note {
         this.uri = note.uri;
         this.url = note.url;
         this.client = client;
+        this.comefrom = typeof note.uri === "undefined" ? client.getHost : note.uri.split("/")[2];
     }
     /**
      * # Reply
@@ -60,7 +61,7 @@ class Note {
             configs.replyId = this.replyId;
             const conf = this.CreateNoteFunction(text, configs);
             const Response = yield (0, posts_1.GETPOST)(`https://${this.client.getHost}/api/notes/create`, Object.assign(conf, { i: this.client.token }));
-            return Response.data;
+            return new Note(Response.data.createdNote, this.client);
         });
     }
     CreateNoteFunction(text, body) {
@@ -100,14 +101,26 @@ class Note {
     }
     /**
        * # Delete
+       * @returns `Promise<void>`
        *
        * このノートを消去します。
        */
     delete() {
         return __awaiter(this, void 0, void 0, function* () {
-            yield (0, posts_1.POST)(`https://${this.client.getHost}/api/notes/delete`, { i: this.client.token, noteId: this.id }).catch(() => {
-                throw new Error("[Misskey.ts API Error] \n 削除できませんでした。");
-            });
+            yield (0, posts_1.POST)(`https://${this.client.getHost}/api/notes/delete`, { i: this.client.token, noteId: this.id });
+        });
+    }
+    /**
+     * # getChildren
+     * @returns `Promise<Note[] | []>`
+     *
+     */
+    getChildren({ limit = 10, sinceId, untilId }) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const Response = yield (0, posts_1.GETPOST)(`https://${this.client.getHost}/api/notes/children`, { noteId: this.id, limit: limit, sinceId: sinceId, untilId: untilId });
+            return Response.data.length > 0
+                ? Response.data.map(v => new Note(v, this.client))
+                : [];
         });
     }
 }

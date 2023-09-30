@@ -16,7 +16,7 @@ export {
 	Note , 
 	Visibility , 
 	ISO8601 
-} from "./message";
+} from "./note";
 export { Notes } from "./notes"; 
 export { Self } from "./self";
 export { TimeLineMessage } from "./timelineMessage";
@@ -25,7 +25,10 @@ export {
 	Following,
 	onlineStatus,
 	MisskeyUser
-} from "./user";
+} from "./misskeyUser";
 export {
 	Instance
 } from "./instance";
+export {
+	TypeofChannel
+} from "./typeofChannel";

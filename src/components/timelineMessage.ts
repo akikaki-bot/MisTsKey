@@ -14,7 +14,8 @@ import {
 import { 
 	BaseMisTskeyError ,
 	Message, 
-	Note
+	Note,
+	TypeofChannel
 } from "./";
 
 
@@ -27,12 +28,25 @@ export class TimeLineMessage {
 	 */
 	public message : Note;
 	private client : Client; 
+	/**
+	 * ## 条件分岐クラス
+	 * 
+	 * 条件分岐に関するクラスです。
+	 * グローバルタイムラインを使用し、なおかつホストフィルター等を利用する場合はこれを利用してください。
+	 * 
+	 * @example
+	 * if(TimeLineMessage.typeof.host("misskey.io")) {
+	 * 		console.log('this message was sent from misskey.io <3')
+	 * }
+	 */
+	public typeof : TypeofChannel<Note>;
 
 	constructor(data : Message, client : Client) {
 		this.client = client;
 		this.message = new Note(data.body.body, client);
 		this.message.BodyId = data.body.id;
 		this.message.text === null ? this.message.IsRenoteMessage = true : this.message.IsRenoteMessage = false;
+		this.typeof = new TypeofChannel<Note>(this.message, this.client);
 	}
 
 	/**

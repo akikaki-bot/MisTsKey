@@ -1,7 +1,7 @@
 import { Client } from "..";
 import { GETPOST } from "../posts";
 import { Meta } from "../types";
-import { ServerMeta } from "./meta";
+import { ServerMeta } from "./serverMeta";
 
 
 export class Instance {

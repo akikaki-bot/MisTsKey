@@ -1,5 +1,5 @@
 import { Client } from "..";
-import { Message, Note } from "./";
+import { Message, Note, TypeofChannel } from "./";
 export declare class TimeLineMessage {
     /**
      * ## message
@@ -8,6 +8,18 @@ export declare class TimeLineMessage {
      */
     message: Note;
     private client;
+    /**
+     * ## 条件分岐クラス
+     *
+     * 条件分岐に関するクラスです。
+     * グローバルタイムラインを使用し、なおかつホストフィルター等を利用する場合はこれを利用してください。
+     *
+     * @example
+     * if(TimeLineMessage.typeof.host("misskey.io")) {
+     * 		console.log('this message was sent from misskey.io <3')
+     * }
+     */
+    typeof: TypeofChannel<Note>;
     constructor(data: Message, client: Client);
     /**
      * # Renote

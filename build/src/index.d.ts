@@ -142,20 +142,12 @@ export declare class Client extends BaseClient {
     reconnect(): void;
 }
 export declare interface Client {
-    on(event: "debug", listener: (data: string) => void): this;
-    on(event: "timelineCreate", listener: (data: TimeLineMessage) => void): this;
-    /**
-     * @deprecated
-     * このイベントは１回だけでなく複数回実行される可能性があります。
-     *
-     * よって、もしあなたが一度きりの実行にしたい場合は`.once`イベントを使用してください。
-     *
-     * ---
-     *
-     * The event may be emitted not just once, but multiple times—twice or more.
-     *
-     * Therefore, if you do not want the event to be emitted more than twice, please make use of the `.once` event.
-     */
-    on(event: "ready", listener: () => void): this;
-    once(event: "ready", listener: () => void): this;
+    on<E extends keyof ClientEvents>(event: E, listener: (...args: ClientEvents[E]) => void): this;
+    once<E extends keyof ClientEvents>(event: E, listener: (...args: ClientEvents[E]) => void): this;
+    emit<E extends keyof ClientEvents>(event: E, ...args: ClientEvents[E]): any;
+}
+export interface ClientEvents {
+    debug: [text: string];
+    timelineCreate: [message: TimeLineMessage];
+    ready: [() => void];
 }

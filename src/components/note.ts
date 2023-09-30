@@ -2,7 +2,7 @@ import { Client } from "..";
 import { GETPOST, POST } from "../posts";
 import { NoteBody, _NoteBody } from "../types/note";
 import { AccessToken } from "../types/reaction";
-import { MisskeyUser } from "./";
+import { MisskeyUser } from ".";
 
 export interface Message {
     type : "channel",
@@ -18,8 +18,6 @@ export interface MessageBody {
     id : string
     type : string
     body : Note
-    /** @deprecated Will be deleted */
-    //IsRenoteMessage : boolean
 }
 
 /**
@@ -107,8 +105,20 @@ export class Note implements BaseNote {
 	replyId : string;
 	renoteId : string;
 	mentions : Array<any>;	//eslint-disable-line
+	/**
+	 * 投稿され、生成されたノートのURL
+	 */
 	uri : string;
+	/**
+	 * たまにかえって来るURL。
+	 * 
+	 * 何なのかはわかりません、、、Githubで良ければご報告ください、、、。
+	 */
 	url : string;
+	/**
+	 * どこのインスタンスから来たか
+	 */
+	comefrom : string;
 
 	private client : Client;
 
@@ -137,6 +147,7 @@ export class Note implements BaseNote {
 		this.uri = note.uri;
 		this.url = note.url;
 		this.client = client;
+		this.comefrom = typeof note.uri === "undefined" ? client.getHost : note.uri.split("/")[2];
 	}
     
 	/**
@@ -159,14 +170,14 @@ export class Note implements BaseNote {
 		configs.replyId = this.replyId;
 		const conf = this.CreateNoteFunction(text , configs);
 
-		const Response = await GETPOST<_NoteBody & AccessToken, { createdNote : Note }>(
+		const Response = await GETPOST<_NoteBody & AccessToken, { createdNote : BaseNote }>(
 			`https://${this.client.getHost}/api/notes/create`,
 			Object.assign(
 				conf,
 				{i : this.client.token}
 			)
 		);
-		return Response.data;
+		return new Note(Response.data.createdNote, this.client);
 	}
 
 	private CreateNoteFunction( text : string , body : NoteBody ) : _NoteBody {
@@ -206,16 +217,28 @@ export class Note implements BaseNote {
 
 	/**
        * # Delete
+	   * @returns `Promise<void>`
        * 
        * このノートを消去します。
        */
 	async delete() {
 		await POST<AccessToken & { noteId : string }>(`https://${this.client.getHost}/api/notes/delete`,
 			{ i : this.client.token , noteId : this.id}
-		).catch(() => {
-			throw new Error("[Misskey.ts API Error] \n 削除できませんでした。");
-		});
+		);
 	}
 
+	/**
+	 * # getChildren
+	 * @returns `Promise<Note[] | []>`
+	 * 
+	 */
+	async getChildren({ limit = 10 , sinceId , untilId } : { limit ?: number , sinceId ?: string, untilId ?: string }) {
+		const Response = await GETPOST<{ noteId : string , limit : number , sinceId : string, untilId : string} , BaseNote[]>(`https://${this.client.getHost}/api/notes/children`,
+			{ noteId : this.id , limit : limit, sinceId : sinceId, untilId : untilId }
+		);
 
+		return Response.data.length > 0 
+			? Response.data.map(v => new Note(v , this.client)) 
+			: [];
+	}
 }
