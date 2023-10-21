@@ -5,6 +5,6 @@ export interface HelloWorld {
     body : {
         channel : ChannelType
         id : string
-        params ?: {}
+        params ?: object
     }
 }

@@ -87,4 +87,5 @@ export declare class Self implements MeDetailed {
     constructor(user: MeDetailed, client?: Client);
     note(text: string | null, configs?: NoteBody): Promise<Note>;
     private CreateNoteFunction;
+    getRecommendation(limit?: number, offset?: number): Promise<MeDetailed[]>;
 }

@@ -18,6 +18,7 @@ class TimeLineMessage {
         this.message = new _1.Note(data.body.body, client);
         this.message.BodyId = data.body.id;
         this.message.text === null ? this.message.IsRenoteMessage = true : this.message.IsRenoteMessage = false;
+        this.typeof = new _1.TypeofChannel(this.message, this.client);
     }
     /**
      * # Renote

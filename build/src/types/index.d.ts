@@ -16,3 +16,4 @@ export interface searchNotesOption {
     userId: string | null;
     channelId: string | null;
 }
+export { Meta, Ad, Features, Policies } from "./meta.type";

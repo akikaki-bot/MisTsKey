@@ -3,7 +3,7 @@
         "target": "ES6",
         "module": "Node16",
         "types": ["node"],
-        "moduleResolution": "node",
+        "moduleResolution": "Node16",
         "resolveJsonModule": true,
         "outDir": "./build",
     },

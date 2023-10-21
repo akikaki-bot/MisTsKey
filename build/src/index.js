@@ -50,6 +50,7 @@ const components_1 = require("./components");
  * })
  * ```
  */
+// eslint-disable-next-line
 class Client extends components_1.BaseClient {
     constructor(
     /**
@@ -89,8 +90,11 @@ class Client extends components_1.BaseClient {
     get getHost() {
         return this.host;
     }
+    InitIncetance() {
+        this.instance = new components_1.Instance(this);
+    }
     __sendHelloWorld() {
-        this.emit('debug', "[Streaming / SendHelloWorld] => " + this.host + " / token : " + this.token);
+        this.emit("debug", "[Streaming / SendHelloWorld] => " + this.host + " / token : " + this.token);
         const Message = {
             type: "connect",
             body: {
@@ -101,7 +105,7 @@ class Client extends components_1.BaseClient {
         this.ws.send(JSON.stringify(Message));
     }
     destory() {
-        this.emit('debug', "[Streaming / GoodbyWorld] => " + this.host + " / token : " + this.token);
+        this.emit("debug", "[Streaming / GoodbyWorld] => " + this.host + " / token : " + this.token);
         const Message = {
             type: "disconnect",
             body: {
@@ -120,10 +124,10 @@ class Client extends components_1.BaseClient {
     }
     InitSelfUser() {
         return __awaiter(this, void 0, void 0, function* () {
-            this.emit('debug', "[API / Getting] Client User [HOST] => " + this.host + " / token : " + this.token);
+            this.emit("debug", "[API / Getting] Client User [HOST] => " + this.host + " / token : " + this.token);
             (0, post_1.GETPOST)(`https://${this.host}/api/i`, { i: this.token }).then((self) => {
                 this.i = new components_1.Self(self.data, this);
-                this.emit('ready', () => { });
+                this.emit("ready", () => { });
                 this.state = wsState_1.WebSocketState.connected;
             });
         });
@@ -140,14 +144,16 @@ class Client extends components_1.BaseClient {
      */
     login(token) {
         this.__InitLogin(token);
-        this.emit('debug', "[Streaming / Connecting] => " + this.host + " / token : " + this.token);
+        this.emit("debug", "[Streaming / Connecting] => " + this.host + " / token : " + this.token);
         this.ws = new ws_1.default(`wss://${this.host}/streaming?i=${this.token}`);
         this.ws.onopen = () => {
             this.state = wsState_1.WebSocketState.connecting;
-            this.emit('debug', `[Streaming / Successfully] => ${this.host} / Successfully connect!`);
+            this.emit("debug", `[Streaming / Successfully] => ${this.host} / Successfully connect!`);
             this.__sendHelloWorld();
             this.InitSelfUser();
+            this.InitIncetance();
         };
+        // eslint-disable-next-line
         this.ws.onmessage = (msg) => {
             const message = JSON.parse(msg.data);
             const MessageClass = new components_1.TimeLineMessage(message, this);
@@ -157,7 +163,7 @@ class Client extends components_1.BaseClient {
             typeof message.body !== "undefined" ? this.cache.set(MessageClass.message.id, MessageClass) : void 0;
         };
         this.ws.onclose = () => {
-            this.emit('debug', "[Streaming / ReConnecting] => Function Logining...");
+            this.emit("debug", "[Streaming / ReConnecting] => Function Logining...");
             this.state = wsState_1.WebSocketState.reconnecting;
             this.ws = void 0;
             this.login(this.token);

@@ -1,9 +1,12 @@
 {
   "name": "mistskey",
-  "version": "1.0.7",
+  "version": "1.1.0",
   "description": "A api Wrapper for misskey ",
   "main": "build/index.js",
   "scripts": {
+    "check": "npm run lint && npm run prettier",
+    "prettier": "npx prettier src",
+    "lint": "npx eslint \"src\" --ext .ts,.tsx",
     "build": "rmdir /s build && npx tsc && npx tsc --declaration"
   },
   "repository": {
@@ -17,11 +20,16 @@
   "license": "MIT",
   "devDependencies": {
     "@types/ws": "^8.5.5",
+    "@typescript-eslint/eslint-plugin": "^6.4.1",
+    "@typescript-eslint/parser": "^6.4.1",
+    "eslint": "^8.47.0",
+    "prettier": "^2.8.8",
     "ts-node": "^10.9.1",
     "typescript": "^5.1.6"
   },
   "dependencies": {
     "axios": "^1.4.0",
+    "mistskey-websocket-manager": "^0.0.3",
     "ws": "^8.13.0"
   }
 }

@@ -1,6 +1,6 @@
 import { Client } from "..";
 import { NoteBody } from "../types/note";
-import { MisskeyUser } from "./";
+import { MisskeyUser } from ".";
 export interface Message {
     type: "channel";
     body: MessageBody;
@@ -100,8 +100,20 @@ export declare class Note implements BaseNote {
     replyId: string;
     renoteId: string;
     mentions: Array<any>;
+    /**
+     * 投稿され、生成されたノートのURL
+     */
     uri: string;
+    /**
+     * たまにかえって来るURL。
+     *
+     * 何なのかはわかりません、、、Githubで良ければご報告ください、、、。
+     */
     url: string;
+    /**
+     * どこのインスタンスから来たか
+     */
+    comefrom: string;
     private client;
     constructor(note: BaseNote, client?: Client);
     /**
@@ -120,14 +132,23 @@ export declare class Note implements BaseNote {
      * await someMessage.reply('Reply Message', { visibility : "home" })
      * ```
      */
-    reply(text: string | null, configs?: NoteBody): Promise<{
-        createdNote: Note;
-    }>;
+    reply(text: string | null, configs?: NoteBody): Promise<Note>;
     private CreateNoteFunction;
     /**
-     * # Delete
-     *
-     * このノートを消去します。
-     */
+       * # Delete
+       * @returns `Promise<void>`
+       *
+       * このノートを消去します。
+       */
     delete(): Promise<void>;
+    /**
+     * # getChildren
+     * @returns `Promise<Note[] | []>`
+     *
+     */
+    getChildren({ limit, sinceId, untilId }: {
+        limit?: number;
+        sinceId?: string;
+        untilId?: string;
+    }): Promise<Note[]>;
 }

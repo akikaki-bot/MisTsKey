@@ -11,6 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Self = void 0;
 const posts_1 = require("../posts");
+const _1 = require("./");
 /**
  * ## Self
  * -> implements MeDetailed
@@ -99,7 +100,7 @@ class Self {
         return __awaiter(this, void 0, void 0, function* () {
             const conf = this.CreateNoteFunction(text, configs);
             const Response = yield (0, posts_1.GETPOST)(`https://${this.client.getHost}/api/notes/create`, Object.assign(conf, { i: this.client.token }));
-            return Response.data.createdNote;
+            return new _1.Note(Response.data.createdNote);
         });
     }
     CreateNoteFunction(text, body) {
@@ -136,6 +137,12 @@ class Self {
             channelId: (_k = body.channelId) !== null && _k !== void 0 ? _k : null,
             poll: (_l = body.poll.toJSON()) !== null && _l !== void 0 ? _l : null
         };
+    }
+    getRecommendation(limit, offset) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const Response = yield (0, posts_1.GETPOST)(`https://${this.client.getHost}/api/users/recommend`, { i: this.client.token, limit: limit, offset: offset });
+            return Response.data;
+        });
     }
 }
 exports.Self = Self;
