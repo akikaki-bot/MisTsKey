@@ -13,6 +13,7 @@ import { GETPOST } from "./posts/post";
 import { AccessToken } from "./types/reaction";
 import { MeDetailed } from "./types/me";
 import { WebSocketState } from "./types/wsState";
+import { WebSocketManager } from "../@ws/build";
 import {
 	BaseClient, 
 	ChannelType , 
@@ -23,7 +24,7 @@ import {
 	Instance
 } from "./components";
 /**
- * # Client
+ * # Client	
  * 
  * ---
  * 
@@ -51,10 +52,19 @@ import {
 // eslint-disable-next-line
 export class Client extends BaseClient {
 
+	/**
+	 * @deprecated
+	 * 
+	 * Websocket components were moved to WebSocketManager.
+	 *
+	 * it will soon deleted in next version.
+	 */
 	private ws : WebSocket;
+	private wsm : WebSocketManager;
 	private host : string = "misskey.io";
 	private id : string; 
 	private accessToken : string;
+	private maxResume : number | null;
 
 	public token : string;
 	/**
@@ -147,10 +157,19 @@ export class Client extends BaseClient {
              * 設定がない場合、`public` となります。
              */
             defaultNoteChannel ?: Visibility
+			/**
+			 * # MoreOption.maxResume
+			 * 再接続の上限を設定します。
+			 * 
+			 * 設定がない場合、上限は設定されません。
+			 * 
+			 * (無限に再接続される)
+			 */
+			maxResume ?: number
         }
 	) {
 		super(channelType);
-
+		this.maxResume = null;
 		this.notes = new Notes(this);
 		this.cache = new Cache<string, TimeLineMessage>();
 		typeof MoreOption !== "undefined" && typeof MoreOption.host !== "undefined" 
@@ -161,6 +180,10 @@ export class Client extends BaseClient {
 		typeof this.defaultNoteChannelVisibility !== "undefined" ? 
 			this.defaultNoteChannelVisibility = MoreOption.defaultNoteChannel : 
 			this.defaultNoteChannelVisibility = "public";
+
+		typeof MoreOption !== "undefined" && typeof MoreOption.maxResume !== "undefined" 
+			? this.maxResume = MoreOption.maxResume
+			: void 0;
 
         
 
@@ -186,7 +209,7 @@ export class Client extends BaseClient {
 			}
 		};
 
-		this.ws.send(
+		this.wsm.send(
 			JSON.stringify(Message)
 		);
 	}
@@ -201,7 +224,7 @@ export class Client extends BaseClient {
 			}
 		};
 
-		this.ws.send(
+		this.wsm.send(
 			JSON.stringify(Message)
 		);
 	}
@@ -240,39 +263,56 @@ export class Client extends BaseClient {
 		this.__InitLogin(token);
 
 		this.emit("debug", "[Streaming / Connecting] => "+this.host+" / token : "+this.token);
-		this.ws = new WebSocket(`wss://${this.host}/streaming?i=${this.token}`);
-        
-		this.ws.onopen = () => {
+		
+		this.wsm = new WebSocketManager(`wss://${this.host}/streaming?i=${this.token}`, {
+			setMaxResume : this.maxResume
+		});
+
+		this.wsm.on("debug", (debug) => {
+			console.log(debug);
+		});
+
+		this.wsm.on("ready", () => {
 			this.state = WebSocketState.connecting;
 			this.emit("debug", `[Streaming / Successfully] => ${this.host} / Successfully connect!`);
 			this.__sendHelloWorld();
 			this.InitSelfUser();
 			this.InitIncetance();
-		};
-		// eslint-disable-next-line
-		this.ws.onmessage = ( msg : any ) => {
+		});
+
+		//eslint-disable-next-line
+		this.wsm.on("message", (msg : any) => {
 			const message = JSON.parse(msg.data);
 			const MessageClass = new TimeLineMessage(message, this);
 			if(typeof MessageClass.message.text !== "string") return;
 
 			this.emit("timelineCreate", MessageClass);
 			typeof message.body !== "undefined" ? this.cache.set(MessageClass.message.id, MessageClass) : void 0;
-		};
+		});
 
-		this.ws.onclose = () => {
-			this.emit("debug" , "[Streaming / ReConnecting] => Function Logining...");
+		this.wsm.on("reconnect", () => {
+			this.emit("debug" , "[Streaming / ReConnecting] => Reconnect...");
 			this.state = WebSocketState.reconnecting;
-			this.ws = void 0;
-			this.login(this.token);
-		};
+		});
+
+		this.wsm.on("disconnect", ( cause ) => {
+			this.emit("debug" , `[Streaming / Disconnect] => Disconnect from server because : ${cause}`);
+		});
+
 	}
 
+	/**
+	 * @deprecated
+	 * 
+	 * Websocket components are moved to WebSocketManager.
+	 * 
+	 * Will soon deleted in next version.
+	 */
 	reconnect()  {
 		this.ws = new WebSocket(`wss://${this.host}/streaming?i=${this.token}`);
 	}
 
 }
-
 // eslint-disable-next-line
 export declare interface Client {
 

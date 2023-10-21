@@ -27,7 +27,7 @@ export type onlineStatus = "online" | "active" | "offline" | "unknown"
  * ## MisskeyUser
  * -> implements User
  * 
- * ############################
+ * ---
  * 
  * ユーザーについてのクラス。（簡易）
  * 
@@ -58,7 +58,7 @@ export class MisskeyUser implements User {
 		this.client = client;
 	}
 
-	async getFollower( config ?: Following) : Promise<Follower[] | []> {
+	async getFollower( config ?: Following ) : Promise<Follower[] | []> {
 		const followers = await GETPOST<AccessToken & Following, Follower[]>(`https://${this.client.getHost}/api/users/followers`, {
 			i : this.client.getAccessToken(),
 			sinceId : config.sinceId,
