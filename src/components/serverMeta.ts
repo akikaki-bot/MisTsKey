@@ -1,11 +1,11 @@
 
-import { Client } from "..";
+import { Client } from "@/src";
 import {
 	Meta,
 	Ad, 
 	Features, 
 	Policies 
-} from "../types";
+} from "@/src/types";
 
 export class ServerMeta implements Meta {
 

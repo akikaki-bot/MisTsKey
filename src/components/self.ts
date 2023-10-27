@@ -1,5 +1,6 @@
-import { Client } from "..";
-import { GETPOST } from "../posts";
+import { Client } from "@/src";
+import { EmeraldObjectVaildater } from "@emerald";
+import { GETPOST } from "@/src/posts";
 import { 
 	Achievement, 
 	BadgeRole, 
@@ -7,13 +8,13 @@ import {
 	MeDetailed, 
 	Policies, 
 	Role 
-} from "../types/me";
+} from "@/src/types/me";
 import {
 	NoteBody,
 	_NoteBody
-} from "../types/note";
-import { AccessToken } from "../types/reaction";
-import { Note } from "./";
+} from "@/src/types/note";
+import { AccessToken } from "@/src/types/reaction";
+import { Note, Visibility } from "./";
 
 
 /**
@@ -101,6 +102,7 @@ export class Self implements MeDetailed {
 	loggedInDays:                    number;
 	policies:                        Policies;
 	private client :                 Client; 
+	private defaultNote : EmeraldObjectVaildater<_NoteBody>;
 
 	constructor(user : MeDetailed, client ?: Client) {
 		this.client = client;
@@ -175,6 +177,20 @@ export class Self implements MeDetailed {
 		this.achievements = user.achievements;
 		this.loggedInDays = user.loggedInDays;
 		this.policies = user.policies;
+		this.defaultNote = new EmeraldObjectVaildater<_NoteBody>({
+			text : null,
+			visibility : this.client.defaultNoteChannelVisibility,
+			visibleUserIds : [],
+			cw : null,
+			localOnly : false,
+			noExtractMentions : false,
+			noExtractEmojis : false,
+			noExtractHashtags : false,
+			replyId : null,
+			renoteId : null,
+			channelId : null,
+			poll : null
+		});
 	}
 
 	async note( text : string | null , configs ?: NoteBody ) : Promise<Note> { 
@@ -191,38 +207,78 @@ export class Self implements MeDetailed {
 	}
 
 	private CreateNoteFunction( text : string , body : NoteBody ) : _NoteBody {
+		
 		if(typeof body === "undefined") {
-			return {
-				text : text,
-				visibility : this.client.defaultNoteChannelVisibility,
-				visibleUserIds : [],
-				cw : null,
-				localOnly : false,
-				noExtractMentions : false,
-				noExtractEmojis : false,
-				noExtractHashtags : false,
-				replyId : null,
-				renoteId : null,
-				channelId : null,
-				poll : null
-			};
+			this.defaultNote.merge<{ text : string }>({ text : text });
+			return this.defaultNote.Object;
 		}
-		return {
-			text : text,
-			visibility : body.visibility ?? this.client.defaultNoteChannelVisibility,
-			visibleUserIds : body.visibleUserIds ?? [],
-			cw : body.cw ?? null,
-			localOnly : body.localOnly ?? false,
-			noExtractMentions : body.noExtractMentions ?? false,
-			noExtractEmojis : body.noExtractEmojis ?? false,
-			noExtractHashtags : body.noExtractHashtags ?? false,
-			fileIds : body.fileIds,
-			mediaIds : body.mediaIds,
-			replyId : body.replyId ?? null,
-			renoteId : body.renoteId ?? null,
-			channelId : body.channelId ?? null,
-			poll : body.poll.toJSON() ?? null
-		};
+
+		this.defaultNote.mergeNullValue<{ visibility : Visibility }, "visibility">(
+			"visibility", 
+			body.visibility , 
+			this.client.defaultNoteChannelVisibility
+		);
+		this.defaultNote.mergeNullValue<{ visibleUserIds : string[] }, "visibleUserIds">(
+			"visibleUserIds",
+			body.visibleUserIds , 
+			[]
+		);
+		this.defaultNote.mergeNullValue<{ cw : string }, "cw">(
+			"cw", 
+			body.cw ,
+			null
+		);
+		this.defaultNote.mergeNullValue<{ localOnly : boolean }, "localOnly">(
+			"localOnly", 
+			body.localOnly , 
+			false
+		);
+		this.defaultNote.mergeNullValue<{ noExtractMentions : boolean }, "noExtractMentions">(
+			"noExtractMentions", 
+			body.noExtractMentions , 
+			false
+		);
+		this.defaultNote.mergeNullValue<{ noExtractEmojis : boolean }, "noExtractEmojis">(
+			"noExtractEmojis", 
+			body.noExtractEmojis , 
+			false
+		);
+		this.defaultNote.mergeNullValue<{ noExtractHashtags : boolean }, "noExtractHashtags">(
+			"noExtractHashtags", 
+			body.noExtractHashtags , 
+			false
+		);
+		this.defaultNote.mergeNullValue<{ fileIds : string[] }, "fileIds">(
+			"fileIds", 
+			body.fileIds , 
+			[]
+		);
+		this.defaultNote.mergeNullValue<{ mediaIds : string[] }, "mediaIds">(
+			"mediaIds", 
+			body.mediaIds , 
+			[]
+		);
+		this.defaultNote.mergeNullValue<{ replyId : string }, "replyId">(
+			"replyId", 
+			body.replyId , 
+			null
+		);
+		this.defaultNote.mergeNullValue<{ renoteId : string }, "renoteId">(
+			"renoteId", 
+			body.replyId , 
+			null
+		);
+		this.defaultNote.mergeNullValue<{ channelId : string }, "channelId">(
+			"channelId", 
+			body.replyId , 
+			null
+		);
+		this.defaultNote.mergeNullObject<{ poll : { choices : Array<string>, multiple : boolean, expiresAt : number, expiredAfter : number}  }>(
+			{ poll : body.poll.toJSON() }, 
+			null
+		);
+
+		return this.defaultNote.Object;
 	}
 
 	async getRecommendation( limit ?: number , offset ?: number ) : Promise<MeDetailed[]> {
