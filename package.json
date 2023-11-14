@@ -29,6 +29,6 @@
   },
   "dependencies": {
     "axios": "^1.4.0",
-    "mistskey-websocket-manager": "^0.0.5"
+    "mistskey-websocket-manager": "^0.0.6"
   }
 }
