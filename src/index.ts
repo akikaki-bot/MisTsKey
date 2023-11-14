@@ -3,8 +3,6 @@
 // :) MisTsKey
 //
 // I Love Misskey <3
-
-import WebSocket from "ws";
 import { Cache } from "./types/cache";
 import { HelloWorld } from "./types/helloworld";
 import { createUuid } from "./utils/createUUID";
@@ -13,7 +11,7 @@ import { GETPOST } from "./posts/post";
 import { AccessToken } from "./types/reaction";
 import { MeDetailed } from "./types/me";
 import { WebSocketState } from "./types/wsState";
-import { WebSocketManager } from "../@ws/build";
+import { WebSocketManager } from "mistskey-websocket-manager";
 import {
 	BaseClient, 
 	ChannelType , 
@@ -59,7 +57,7 @@ export class Client extends BaseClient {
 	 *
 	 * it will soon deleted in next version.
 	 */
-	private ws : WebSocket;
+	private ws : void;
 	private wsm : WebSocketManager;
 	private host : string = "misskey.io";
 	private id : string; 
@@ -309,7 +307,7 @@ export class Client extends BaseClient {
 	 * Will soon deleted in next version.
 	 */
 	reconnect()  {
-		this.ws = new WebSocket(`wss://${this.host}/streaming?i=${this.token}`);
+
 	}
 
 }

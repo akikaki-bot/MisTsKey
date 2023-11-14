@@ -1,4 +1,4 @@
-import { Client } from "..";
+import { Client } from "../";
 import { Achievement, BadgeRole, Emojis, MeDetailed, Policies, Role } from "../types/me";
 import { NoteBody } from "../types/note";
 import { Note } from "./";
@@ -84,6 +84,7 @@ export declare class Self implements MeDetailed {
     loggedInDays: number;
     policies: Policies;
     private client;
+    private defaultNote;
     constructor(user: MeDetailed, client?: Client);
     note(text: string | null, configs?: NoteBody): Promise<Note>;
     private CreateNoteFunction;

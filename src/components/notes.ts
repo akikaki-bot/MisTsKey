@@ -1,4 +1,4 @@
-import { Client } from "..";
+import { Client } from "../";
 import { GETPOST } from "../posts";
 import { getMentionedNotesOption, searchNotesOption } from "../types";
 import { AccessToken, GlobalNoteIdParam } from "../types/reaction";

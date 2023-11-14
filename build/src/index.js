@@ -1,9 +1,4 @@
 "use strict";
-//
-// API WRAPPER 
-// :) MisTsKey
-//
-// I Love Misskey <3
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -13,16 +8,18 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Client = void 0;
-const ws_1 = __importDefault(require("ws"));
+//
+// API WRAPPER 
+// :) MisTsKey
+//
+// I Love Misskey <3
 const cache_1 = require("./types/cache");
 const createUUID_1 = require("./utils/createUUID");
 const post_1 = require("./posts/post");
 const wsState_1 = require("./types/wsState");
+const mistskey_websocket_manager_1 = require("mistskey-websocket-manager");
 const components_1 = require("./components");
 /**
  * # Client
@@ -76,6 +73,7 @@ class Client extends components_1.BaseClient {
          *
          */
         this.defaultNoteChannelVisibility = "public";
+        this.maxResume = null;
         this.notes = new components_1.Notes(this);
         this.cache = new cache_1.Cache();
         typeof MoreOption !== "undefined" && typeof MoreOption.host !== "undefined"
@@ -85,6 +83,9 @@ class Client extends components_1.BaseClient {
         typeof this.defaultNoteChannelVisibility !== "undefined" ?
             this.defaultNoteChannelVisibility = MoreOption.defaultNoteChannel :
             this.defaultNoteChannelVisibility = "public";
+        typeof MoreOption !== "undefined" && typeof MoreOption.maxResume !== "undefined"
+            ? this.maxResume = MoreOption.maxResume
+            : void 0;
         this.id = (0, createUUID_1.createUuid)();
     }
     get getHost() {
@@ -102,7 +103,7 @@ class Client extends components_1.BaseClient {
                 id: this.id
             }
         };
-        this.ws.send(JSON.stringify(Message));
+        this.wsm.send(JSON.stringify(Message));
     }
     destory() {
         this.emit("debug", "[Streaming / GoodbyWorld] => " + this.host + " / token : " + this.token);
@@ -112,7 +113,7 @@ class Client extends components_1.BaseClient {
                 id: this.id
             }
         };
-        this.ws.send(JSON.stringify(Message));
+        this.wsm.send(JSON.stringify(Message));
     }
     getAccessToken() {
         return this.accessToken;
@@ -145,32 +146,44 @@ class Client extends components_1.BaseClient {
     login(token) {
         this.__InitLogin(token);
         this.emit("debug", "[Streaming / Connecting] => " + this.host + " / token : " + this.token);
-        this.ws = new ws_1.default(`wss://${this.host}/streaming?i=${this.token}`);
-        this.ws.onopen = () => {
+        this.wsm = new mistskey_websocket_manager_1.WebSocketManager(`wss://${this.host}/streaming?i=${this.token}`, {
+            setMaxResume: this.maxResume
+        });
+        this.wsm.on("debug", (debug) => {
+            console.log(debug);
+        });
+        this.wsm.on("ready", () => {
             this.state = wsState_1.WebSocketState.connecting;
             this.emit("debug", `[Streaming / Successfully] => ${this.host} / Successfully connect!`);
             this.__sendHelloWorld();
             this.InitSelfUser();
             this.InitIncetance();
-        };
-        // eslint-disable-next-line
-        this.ws.onmessage = (msg) => {
+        });
+        //eslint-disable-next-line
+        this.wsm.on("message", (msg) => {
             const message = JSON.parse(msg.data);
             const MessageClass = new components_1.TimeLineMessage(message, this);
             if (typeof MessageClass.message.text !== "string")
                 return;
             this.emit("timelineCreate", MessageClass);
             typeof message.body !== "undefined" ? this.cache.set(MessageClass.message.id, MessageClass) : void 0;
-        };
-        this.ws.onclose = () => {
-            this.emit("debug", "[Streaming / ReConnecting] => Function Logining...");
+        });
+        this.wsm.on("reconnect", () => {
+            this.emit("debug", "[Streaming / ReConnecting] => Reconnect...");
             this.state = wsState_1.WebSocketState.reconnecting;
-            this.ws = void 0;
-            this.login(this.token);
-        };
+        });
+        this.wsm.on("disconnect", (cause) => {
+            this.emit("debug", `[Streaming / Disconnect] => Disconnect from server because : ${cause}`);
+        });
     }
+    /**
+     * @deprecated
+     *
+     * Websocket components are moved to WebSocketManager.
+     *
+     * Will soon deleted in next version.
+     */
     reconnect() {
-        this.ws = new ws_1.default(`wss://${this.host}/streaming?i=${this.token}`);
     }
 }
 exports.Client = Client;

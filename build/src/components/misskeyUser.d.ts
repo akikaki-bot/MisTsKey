@@ -20,7 +20,7 @@ export type onlineStatus = "online" | "active" | "offline" | "unknown";
  * ## MisskeyUser
  * -> implements User
  *
- * ############################
+ * ---
  *
  * ユーザーについてのクラス。（簡易）
  *

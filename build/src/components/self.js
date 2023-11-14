@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Self = void 0;
+const _emerald_1 = require("../@emerald");
 const posts_1 = require("../posts");
 const _1 = require("./");
 /**
@@ -95,6 +96,20 @@ class Self {
         this.achievements = user.achievements;
         this.loggedInDays = user.loggedInDays;
         this.policies = user.policies;
+        this.defaultNote = new _emerald_1.EmeraldObjectVaildater({
+            text: null,
+            visibility: this.client.defaultNoteChannelVisibility,
+            visibleUserIds: [],
+            cw: null,
+            localOnly: false,
+            noExtractMentions: false,
+            noExtractEmojis: false,
+            noExtractHashtags: false,
+            replyId: null,
+            renoteId: null,
+            channelId: null,
+            poll: null
+        });
     }
     note(text, configs) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -104,39 +119,24 @@ class Self {
         });
     }
     CreateNoteFunction(text, body) {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l;
         if (typeof body === "undefined") {
-            return {
-                text: text,
-                visibility: this.client.defaultNoteChannelVisibility,
-                visibleUserIds: [],
-                cw: null,
-                localOnly: false,
-                noExtractMentions: false,
-                noExtractEmojis: false,
-                noExtractHashtags: false,
-                replyId: null,
-                renoteId: null,
-                channelId: null,
-                poll: null
-            };
+            this.defaultNote.merge({ text: text });
+            return this.defaultNote.Object;
         }
-        return {
-            text: text,
-            visibility: (_a = body.visibility) !== null && _a !== void 0 ? _a : this.client.defaultNoteChannelVisibility,
-            visibleUserIds: (_b = body.visibleUserIds) !== null && _b !== void 0 ? _b : [],
-            cw: (_c = body.cw) !== null && _c !== void 0 ? _c : null,
-            localOnly: (_d = body.localOnly) !== null && _d !== void 0 ? _d : false,
-            noExtractMentions: (_e = body.noExtractMentions) !== null && _e !== void 0 ? _e : false,
-            noExtractEmojis: (_f = body.noExtractEmojis) !== null && _f !== void 0 ? _f : false,
-            noExtractHashtags: (_g = body.noExtractHashtags) !== null && _g !== void 0 ? _g : false,
-            fileIds: body.fileIds,
-            mediaIds: body.mediaIds,
-            replyId: (_h = body.replyId) !== null && _h !== void 0 ? _h : null,
-            renoteId: (_j = body.renoteId) !== null && _j !== void 0 ? _j : null,
-            channelId: (_k = body.channelId) !== null && _k !== void 0 ? _k : null,
-            poll: (_l = body.poll.toJSON()) !== null && _l !== void 0 ? _l : null
-        };
+        this.defaultNote.mergeNullValue("visibility", body.visibility, this.client.defaultNoteChannelVisibility);
+        this.defaultNote.mergeNullValue("visibleUserIds", body.visibleUserIds, []);
+        this.defaultNote.mergeNullValue("cw", body.cw, null);
+        this.defaultNote.mergeNullValue("localOnly", body.localOnly, false);
+        this.defaultNote.mergeNullValue("noExtractMentions", body.noExtractMentions, false);
+        this.defaultNote.mergeNullValue("noExtractEmojis", body.noExtractEmojis, false);
+        this.defaultNote.mergeNullValue("noExtractHashtags", body.noExtractHashtags, false);
+        this.defaultNote.mergeNullValue("fileIds", body.fileIds, []);
+        this.defaultNote.mergeNullValue("mediaIds", body.mediaIds, []);
+        this.defaultNote.mergeNullValue("replyId", body.replyId, null);
+        this.defaultNote.mergeNullValue("renoteId", body.replyId, null);
+        this.defaultNote.mergeNullValue("channelId", body.replyId, null);
+        this.defaultNote.mergeNullObject({ poll: body.poll.toJSON() }, null);
+        return this.defaultNote.Object;
     }
     getRecommendation(limit, offset) {
         return __awaiter(this, void 0, void 0, function* () {

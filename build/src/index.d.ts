@@ -28,10 +28,19 @@ import { BaseClient, ChannelType, Notes, Visibility, Self, TimeLineMessage, Inst
  * ```
  */
 export declare class Client extends BaseClient {
+    /**
+     * @deprecated
+     *
+     * Websocket components were moved to WebSocketManager.
+     *
+     * it will soon deleted in next version.
+     */
     private ws;
+    private wsm;
     private host;
     private id;
     private accessToken;
+    private maxResume;
     token: string;
     /**
      * # Notes
@@ -120,6 +129,15 @@ export declare class Client extends BaseClient {
          * 設定がない場合、`public` となります。
          */
         defaultNoteChannel?: Visibility;
+        /**
+         * # MoreOption.maxResume
+         * 再接続の上限を設定します。
+         *
+         * 設定がない場合、上限は設定されません。
+         *
+         * (無限に再接続される)
+         */
+        maxResume?: number;
     });
     get getHost(): string;
     private InitIncetance;
@@ -139,6 +157,13 @@ export declare class Client extends BaseClient {
      *
      */
     login(token: string): void;
+    /**
+     * @deprecated
+     *
+     * Websocket components are moved to WebSocketManager.
+     *
+     * Will soon deleted in next version.
+     */
     reconnect(): void;
 }
 export declare interface Client {

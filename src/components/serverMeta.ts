@@ -1,5 +1,5 @@
 
-import { Client } from "..";
+import { Client } from "../";
 import {
 	Meta,
 	Ad, 

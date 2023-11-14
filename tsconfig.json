@@ -6,5 +6,10 @@
         "moduleResolution": "Node16",
         "resolveJsonModule": true,
         "outDir": "./build",
+        "baseUrl": "./",
+        "paths": {
+            "@/*": ["*"],
+            "src/": ["./src"]
+        },
     },
   }
