@@ -1,4 +1,5 @@
 node_modules/
 debug/
 build/debug/
+@ws/
 package-lock.json
