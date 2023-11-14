@@ -15,7 +15,7 @@ const posts_1 = require("../posts");
  * ## MisskeyUser
  * -> implements User
  *
- * ############################
+ * ---
  *
  * ユーザーについてのクラス。（簡易）
  *

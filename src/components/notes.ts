@@ -1,8 +1,8 @@
-import { Client } from "@/src";
-import { GETPOST } from "@/src/posts";
-import { getMentionedNotesOption, searchNotesOption } from "@/src/types";
-import { AccessToken, GlobalNoteIdParam } from "@/src/types/reaction";
-import { WebSocketState } from "@/src/types/wsState";
+import { Client } from "../";
+import { GETPOST } from "../posts";
+import { getMentionedNotesOption, searchNotesOption } from "../types";
+import { AccessToken, GlobalNoteIdParam } from "../types/reaction";
+import { WebSocketState } from "../types/wsState";
 import { 
 	BaseNote, 
 	Note , 

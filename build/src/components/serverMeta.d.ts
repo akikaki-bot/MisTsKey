@@ -1,4 +1,4 @@
-import { Client } from "..";
+import { Client } from "../";
 import { Meta, Ad, Features, Policies } from "../types";
 export declare class ServerMeta implements Meta {
     maintainerName: string;

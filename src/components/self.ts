@@ -1,6 +1,6 @@
-import { Client } from "@/src";
-import { EmeraldObjectVaildater } from "@emerald";
-import { GETPOST } from "@/src/posts";
+import { Client } from "../";
+import { EmeraldObjectVaildater } from "../@emerald";
+import { GETPOST } from "../posts";
 import { 
 	Achievement, 
 	BadgeRole, 
@@ -8,12 +8,12 @@ import {
 	MeDetailed, 
 	Policies, 
 	Role 
-} from "@/src/types/me";
+} from "../types/me";
 import {
 	NoteBody,
 	_NoteBody
-} from "@/src/types/note";
-import { AccessToken } from "@/src/types/reaction";
+} from "../types/note";
+import { AccessToken } from "../types/reaction";
 import { Note, Visibility } from "./";
 
 
