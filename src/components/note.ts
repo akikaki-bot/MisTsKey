@@ -1,5 +1,4 @@
 import { Client } from "..";
-import { GETPOST, POST } from "../posts";
 import { NoteBody, _NoteBody } from "../types/note";
 import { AccessToken } from "../types/reaction";
 import { MisskeyUser } from ".";
@@ -170,8 +169,8 @@ export class Note implements BaseNote {
 		configs.replyId = this.replyId;
 		const conf = this.CreateNoteFunction(text , configs);
 
-		const Response = await GETPOST<_NoteBody & AccessToken, { createdNote : BaseNote }>(
-			`https://${this.client.getHost}/api/notes/create`,
+		const Response = await this.client.http.GETPOST<_NoteBody & AccessToken, { createdNote : BaseNote }>(
+			"/api/notes/create",
 			Object.assign(
 				conf,
 				{i : this.client.token}
@@ -222,7 +221,7 @@ export class Note implements BaseNote {
        * このノートを消去します。
        */
 	async delete() {
-		await POST<AccessToken & { noteId : string }>(`https://${this.client.getHost}/api/notes/delete`,
+		await this.client.http.POST<AccessToken & { noteId : string }>("/api/notes/delete",
 			{ i : this.client.token , noteId : this.id}
 		);
 	}
@@ -233,7 +232,7 @@ export class Note implements BaseNote {
 	 * 
 	 */
 	async getChildren({ limit = 10 , sinceId , untilId } : { limit ?: number , sinceId ?: string, untilId ?: string }) {
-		const Response = await GETPOST<{ noteId : string , limit : number , sinceId : string, untilId : string} , BaseNote[]>(`https://${this.client.getHost}/api/notes/children`,
+		const Response = await this.client.http.GETPOST<{ noteId : string , limit : number , sinceId : string, untilId : string} , BaseNote[]>("/api/notes/children",
 			{ noteId : this.id , limit : limit, sinceId : sinceId, untilId : untilId }
 		);
 

@@ -1,5 +1,4 @@
 import { Client } from "../";
-import { GETPOST } from "../posts";
 import { getMentionedNotesOption, searchNotesOption } from "../types";
 import { AccessToken, GlobalNoteIdParam } from "../types/reaction";
 import { WebSocketState } from "../types/wsState";
@@ -28,7 +27,7 @@ export class Notes {
 	 * @returns {Promise<Notes[]>} 検索結果のノートの配列
 	 */
 	async searchNotes(searchQuery : string , options ?: Omit<searchNotesOption, "searchQuery">) : Promise<Note[]>{
-		const ResData = await GETPOST<AccessToken & searchNotesOption, BaseNote[]>(`https://${this.client.getHost}/notes/search`, {
+		const ResData = await this.client.http.GETPOST<AccessToken & searchNotesOption, BaseNote[]>("/notes/search", {
 			i : this.client.token,
 			...Object.assign({searchQuery : searchQuery}, options)
 		});
@@ -44,7 +43,7 @@ export class Notes {
 	 * @returns {Promise<Notes[]>} メンションされたノートの配列
 	 */
 	async getMentionedNotes( options ?: getMentionedNotesOption ) : Promise<Note[]> {
-		const ResData = await GETPOST<AccessToken & getMentionedNotesOption , BaseNote[]>(`https://${this.client.getHost}/notes/mentions`, {
+		const ResData = await this.client.http.GETPOST<AccessToken & getMentionedNotesOption , BaseNote[]>("/notes/mentions", {
 			i : this.client.token,
 			...options
 		});
@@ -66,7 +65,7 @@ export class Notes {
 	async fetch( id : string ) : Promise<TimeLineMessage> {
 		const Message = this.client.cache.get(id);
 		if(!Message && (this.client.state === WebSocketState.connected)) {
-			const RESData = await GETPOST<AccessToken & GlobalNoteIdParam, Note>(`https://${this.client.getHost}/notes/show`, {
+			const RESData = await this.client.http.GETPOST<AccessToken & GlobalNoteIdParam, Note>("/notes/show", {
 				i : this.client.token,
 				noteId : id
 			});

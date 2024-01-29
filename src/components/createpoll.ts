@@ -1,8 +1,22 @@
 
 
 
-
+/**
+ * # CreatePoll 
+ * 
+ * 投票を作成します。
+ * 
+ * @example
+ * ```ts
+ * import { CreatePoll } from "mistskey"
+ * 
+ * const poll = new CreatePoll();
+ * poll.addChoice("ねこ").addChoice("いぬ")
+ * 
+ * await client.user.note("いぬ派？ねこ派？", { poll : poll })
+ */
 export class CreatePoll {
+	
 	choices ?: Array<string>;
 	multiple ?: boolean;
 	expiresAt ?: number; 
