@@ -1,6 +1,20 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreatePoll = void 0;
+/**
+ * # CreatePoll
+ *
+ * 投票を作成します。
+ *
+ * @example
+ * ```ts
+ * import { CreatePoll } from "mistskey"
+ *
+ * const poll = new CreatePoll();
+ * poll.addChoice("ねこ").addChoice("いぬ")
+ *
+ * await client.user.note("いぬ派？ねこ派？", { poll : poll })
+ */
 class CreatePoll {
     constructor() {
         this.choices = [];

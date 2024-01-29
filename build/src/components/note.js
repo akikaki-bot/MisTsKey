@@ -10,7 +10,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Note = void 0;
-const posts_1 = require("../posts");
 const _1 = require(".");
 class Note {
     constructor(note, client) {
@@ -60,7 +59,7 @@ class Note {
         return __awaiter(this, void 0, void 0, function* () {
             configs.replyId = this.replyId;
             const conf = this.CreateNoteFunction(text, configs);
-            const Response = yield (0, posts_1.GETPOST)(`https://${this.client.getHost}/api/notes/create`, Object.assign(conf, { i: this.client.token }));
+            const Response = yield this.client.http.GETPOST("/api/notes/create", Object.assign(conf, { i: this.client.token }));
             return new Note(Response.data.createdNote, this.client);
         });
     }
@@ -107,7 +106,7 @@ class Note {
        */
     delete() {
         return __awaiter(this, void 0, void 0, function* () {
-            yield (0, posts_1.POST)(`https://${this.client.getHost}/api/notes/delete`, { i: this.client.token, noteId: this.id });
+            yield this.client.http.POST("/api/notes/delete", { i: this.client.token, noteId: this.id });
         });
     }
     /**
@@ -117,7 +116,7 @@ class Note {
      */
     getChildren({ limit = 10, sinceId, untilId }) {
         return __awaiter(this, void 0, void 0, function* () {
-            const Response = yield (0, posts_1.GETPOST)(`https://${this.client.getHost}/api/notes/children`, { noteId: this.id, limit: limit, sinceId: sinceId, untilId: untilId });
+            const Response = yield this.client.http.GETPOST("/api/notes/children", { noteId: this.id, limit: limit, sinceId: sinceId, untilId: untilId });
             return Response.data.length > 0
                 ? Response.data.map(v => new Note(v, this.client))
                 : [];
