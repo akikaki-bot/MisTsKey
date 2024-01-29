@@ -11,7 +11,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Self = void 0;
 const _emerald_1 = require("../@emerald");
-const posts_1 = require("../posts");
 const _1 = require("./");
 /**
  * ## Self
@@ -114,7 +113,7 @@ class Self {
     note(text, configs) {
         return __awaiter(this, void 0, void 0, function* () {
             const conf = this.CreateNoteFunction(text, configs);
-            const Response = yield (0, posts_1.GETPOST)(`https://${this.client.getHost}/api/notes/create`, Object.assign(conf, { i: this.client.token }));
+            const Response = yield this.client.http.GETPOST("/api/notes/create", Object.assign(conf, { i: this.client.token }));
             return new _1.Note(Response.data.createdNote);
         });
     }
@@ -140,7 +139,7 @@ class Self {
     }
     getRecommendation(limit, offset) {
         return __awaiter(this, void 0, void 0, function* () {
-            const Response = yield (0, posts_1.GETPOST)(`https://${this.client.getHost}/api/users/recommend`, { i: this.client.token, limit: limit, offset: offset });
+            const Response = yield this.client.http.GETPOST("/api/users/recommend", { i: this.client.token, limit: limit, offset: offset });
             return Response.data;
         });
     }

@@ -10,7 +10,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Instance = void 0;
-const posts_1 = require("../posts");
 const serverMeta_1 = require("./serverMeta");
 class Instance {
     constructor(client) {
@@ -18,7 +17,7 @@ class Instance {
     }
     getMeta(detail = true) {
         return __awaiter(this, void 0, void 0, function* () {
-            const data = yield (0, posts_1.GETPOST)(`https://${this.client.getHost}/api/meta`, { detail: detail });
+            const data = yield this.client.http.GETPOST("/api/meta", { detail: detail });
             return new serverMeta_1.ServerMeta(data.data, this.client);
         });
     }

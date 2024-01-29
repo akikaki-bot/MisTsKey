@@ -10,7 +10,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Notes = void 0;
-const posts_1 = require("../posts");
 const wsState_1 = require("../types/wsState");
 const _1 = require("./");
 // Client.Notes
@@ -29,7 +28,7 @@ class Notes {
      */
     searchNotes(searchQuery, options) {
         return __awaiter(this, void 0, void 0, function* () {
-            const ResData = yield (0, posts_1.GETPOST)(`https://${this.client.getHost}/notes/search`, Object.assign({ i: this.client.token }, Object.assign({ searchQuery: searchQuery }, options)));
+            const ResData = yield this.client.http.GETPOST("/notes/search", Object.assign({ i: this.client.token }, Object.assign({ searchQuery: searchQuery }, options)));
             return ResData.data.map(v => new _1.Note(v));
         });
     }
@@ -43,7 +42,7 @@ class Notes {
      */
     getMentionedNotes(options) {
         return __awaiter(this, void 0, void 0, function* () {
-            const ResData = yield (0, posts_1.GETPOST)(`https://${this.client.getHost}/notes/mentions`, Object.assign({ i: this.client.token }, options));
+            const ResData = yield this.client.http.GETPOST("/notes/mentions", Object.assign({ i: this.client.token }, options));
             return ResData.data.map(v => new _1.Note(v));
         });
     }
@@ -63,7 +62,7 @@ class Notes {
         return __awaiter(this, void 0, void 0, function* () {
             const Message = this.client.cache.get(id);
             if (!Message && (this.client.state === wsState_1.WebSocketState.connected)) {
-                const RESData = yield (0, posts_1.GETPOST)(`https://${this.client.getHost}/notes/show`, {
+                const RESData = yield this.client.http.GETPOST("/notes/show", {
                     i: this.client.token,
                     noteId: id
                 });
