@@ -16,3 +16,4 @@ export async function GETPOST<T , R>(path : string, data ?: T): Promise<AxiosRes
 			throw new MisTsKeyError(Message);
 		});
 }
+

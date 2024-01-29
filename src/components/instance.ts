@@ -1,5 +1,4 @@
 import { Client } from "..";
-import { GETPOST } from "../posts";
 import { Meta } from "../types";
 import { ServerMeta } from "./serverMeta";
 
@@ -15,8 +14,8 @@ export class Instance {
 
 	async getMeta( detail : boolean = true): Promise<ServerMeta> {
 		
-		const data = await GETPOST<{ detail : boolean }, Meta>(
-			`https://${this.client.getHost}/api/meta`, 
+		const data = await this.client.http.GETPOST<{ detail : boolean }, Meta>(
+			"/api/meta", 
 			{ detail : detail }
 		);
 

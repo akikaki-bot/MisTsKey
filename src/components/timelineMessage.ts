@@ -1,8 +1,5 @@
 import { Client } from "..";
-import { 
-	GETPOST, 
-	POST 
-} from "../posts";
+import { Paths } from "../http/paths";
 import { 
 	AccessToken, 
 	DeleteReaction, 
@@ -58,7 +55,7 @@ export class TimeLineMessage {
 	 */
 	async renote(config ?: Partial<{ noteId : string }>) : Promise<Note> {
 		const NoteId = config ? config.noteId ? config.noteId : this.message.id : this.message.id;
-		const data = await GETPOST<GlobalReNoteIdParam & AccessToken , { createdNote : Note , error ?: BaseMisTskeyError }>(`https://${this.client.getHost}/api/notes/create`, {
+		const data = await this.client.http.GETPOST<GlobalReNoteIdParam & AccessToken , { createdNote : Note , error ?: BaseMisTskeyError }>(Paths.Renote, {
 			i : this.client.token,
 			renoteId : NoteId
 		});
@@ -74,7 +71,7 @@ export class TimeLineMessage {
 	 */
 	async unRenote(config ?: Partial<{ noteId : string }>) : Promise<void> {
 		const NoteId = config ? config.noteId ? config.noteId : this.message.id : this.message.id;
-		await POST<GlobalReNoteIdParam & AccessToken>(`https://${this.client.getHost}/api/notes/unrenote`, {
+		await this.client.http.POST<GlobalReNoteIdParam & AccessToken>(Paths.UnRenote, {
 			i : this.client.token,
 			renoteId : NoteId
 		});
@@ -95,7 +92,7 @@ export class TimeLineMessage {
 	 */
 	async getRenote(config ?: Partial<{noteId : string , limit : number , sinceId : string , untilId : string}> ) {
 		const NoteId = config.noteId ? config.noteId : this.message.id;
-		const data = await GETPOST<GlobalNoteIdParam & Partial<GetRenote> & AccessToken , Array<Note>>(`https://${this.client.getHost}/api/notes/renotes`, {
+		const data = await this.client.http.GETPOST<GlobalNoteIdParam & Partial<GetRenote> & AccessToken , Array<Note>>(Paths.GetRenote, {
 			i : this.client.token , 
 			noteId : NoteId,
 			limit : config.limit,
@@ -113,7 +110,7 @@ export class TimeLineMessage {
 	 */
 	async favoriteCreate() {
 		const NoteId = this.message.id;
-		await POST<GlobalNoteIdParam & AccessToken>(`https://${this.client.getHost}/api/favorites/create`, {i : this.client.token , noteId : NoteId });
+		await this.client.http.POST<GlobalNoteIdParam & AccessToken>(Paths.favoritesCreate, {i : this.client.token , noteId : NoteId });
 	}
 
 	/**
@@ -123,7 +120,7 @@ export class TimeLineMessage {
 	 */
 	async favoriteDelete() {
 		const NoteId = this.message.id;
-		await POST<GlobalNoteIdParam & AccessToken>(`https://${this.client.getHost}/api/favorites/delete`, {i : this.client.token , noteId : NoteId});
+		await this.client.http.POST<GlobalNoteIdParam & AccessToken>(Paths.favoritesDelete, {i : this.client.token , noteId : NoteId});
 	}
 
 
@@ -137,9 +134,9 @@ export class TimeLineMessage {
 	 */
 	async reaction(reactionEmoji : string) {
 		const NoteId = this.message.id;
-		await POST<
+		await this.client.http.POST<
 		Reaction & AccessToken
-		>(`https://${this.client.getHost}/api/notes/reactions/create`,
+		>(Paths.NoteReactionsCreate,
 			{
 				i : this.client.token , 
 				noteId : NoteId , 
@@ -158,9 +155,9 @@ export class TimeLineMessage {
 	 */
 	async reactionDelete() {
 		const NoteId = this.message.id;
-		await POST<
+		await this.client.http.POST<
 		DeleteReaction & AccessToken
-		>(`https://${this.client.getHost}/api/notes/reactions/delete`,
+		>("/api/notes/reactions/delete",
 			{
 				i : this.client.token , 
 				noteId : NoteId , 

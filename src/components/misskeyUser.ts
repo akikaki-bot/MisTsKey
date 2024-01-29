@@ -1,5 +1,4 @@
 import { Client } from "..";
-import { GETPOST } from "../posts";
 import { Follower } from "../types/follower";
 import { AccessToken } from "../types/reaction";
 
@@ -59,7 +58,7 @@ export class MisskeyUser implements User {
 	}
 
 	async getFollower( config ?: Following ) : Promise<Follower[] | []> {
-		const followers = await GETPOST<AccessToken & Following, Follower[]>(`https://${this.client.getHost}/api/users/followers`, {
+		const followers = await this.client.http.GETPOST<AccessToken & Following, Follower[]>("/api/users/followers", {
 			i : this.client.getAccessToken(),
 			sinceId : config.sinceId,
 			untilId : config.untilId,
@@ -72,7 +71,7 @@ export class MisskeyUser implements User {
 
 	/*
     async getStatus () : Promise<UserStatus>{
-        const stat = await GETPOST<{userId : string}, Status>(`https://${this.client.getHost}/api/users/stats`, {
+        const stat = await GETPOST<{userId : string}, Status>(`/api/users/stats`, {
             userId : this.id
         })
 

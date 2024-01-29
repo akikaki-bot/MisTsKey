@@ -1,6 +1,5 @@
 import { Client } from "../";
 import { EmeraldObjectVaildater } from "../@emerald";
-import { GETPOST } from "../posts";
 import { 
 	Achievement, 
 	BadgeRole, 
@@ -15,7 +14,6 @@ import {
 } from "../types/note";
 import { AccessToken } from "../types/reaction";
 import { Note, Visibility } from "./";
-
 
 /**
  * ## Self
@@ -196,8 +194,8 @@ export class Self implements MeDetailed {
 	async note( text : string | null , configs ?: NoteBody ) : Promise<Note> { 
 
 		const conf = this.CreateNoteFunction(text ,configs);
-		const Response = await GETPOST<_NoteBody & AccessToken, { createdNote : Note }>(
-			`https://${this.client.getHost}/api/notes/create`,
+		const Response = await this.client.http.GETPOST<_NoteBody & AccessToken, { createdNote : Note }>(
+			"/api/notes/create",
 			Object.assign(
 				conf,
 				{i : this.client.token}
@@ -273,7 +271,7 @@ export class Self implements MeDetailed {
 			body.replyId , 
 			null
 		);
-		this.defaultNote.mergeNullObject<{ poll : { choices : Array<string>, multiple : boolean, expiresAt : number, expiredAfter : number}  }>(
+		this.defaultNote.mergeNullObject<{ poll : { choices : Array<string>, multiple : boolean, expiresAt : number, expiredAfter : number }  }>(
 			{ poll : body.poll.toJSON() }, 
 			null
 		);
@@ -282,7 +280,7 @@ export class Self implements MeDetailed {
 	}
 
 	async getRecommendation( limit ?: number , offset ?: number ) : Promise<MeDetailed[]> {
-		const Response = await GETPOST<AccessToken & { limit : number , offset : number }, MeDetailed[]>(`https://${this.client.getHost}/api/users/recommend`,
+		const Response = await this.client.http.GETPOST<AccessToken & { limit : number , offset : number }, MeDetailed[]>("/api/users/recommend",
 			{ i : this.client.token, limit : limit , offset : offset }
 		);
 
@@ -291,7 +289,7 @@ export class Self implements MeDetailed {
 
 	/*
 	async getStatus () : Promise<UserStatus>{
-		const stat = await GETPOST<{userId : string}, Status>(`https://${this.client.getHost}/api/users/stats`, {
+		const stat = await this.client.http.GETPOST<{userId : string}, Status>("/api/users/stats", {
 			userId : this.id
 		})
 
