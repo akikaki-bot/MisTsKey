@@ -11,6 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Self = void 0;
 const _emerald_1 = require("../@emerald");
+const createUUID_1 = require("../utils/createUUID");
 const _1 = require("./");
 /**
  * ## Self
@@ -107,14 +108,46 @@ class Self {
             replyId: null,
             renoteId: null,
             channelId: null,
-            poll: null
+            poll: null,
+            files: [],
         });
     }
     note(text, configs) {
         return __awaiter(this, void 0, void 0, function* () {
             const conf = this.CreateNoteFunction(text, configs);
+            if (conf.files.length > 0) {
+                const Ids = yield Promise.all(conf.files.map((v) => __awaiter(this, void 0, void 0, function* () { return this.upload(v.toObject().file, v.toObject()); })));
+                delete conf.files;
+                conf.fileIds = Ids.map(v => v.id);
+            }
+            this.client.emit("debug", `[Note] Attachments : ${conf.fileIds.length} isDeletedProperty : ${typeof conf.files}`);
             const Response = yield this.client.http.GETPOST("/api/notes/create", Object.assign(conf, { i: this.client.token }));
             return new _1.Note(Response.data.createdNote);
+        });
+    }
+    /**
+     * ### self.upload
+     *
+     * ドライブにアップロードします。
+     *
+     * @param {Buffer} file
+     * @param {uploadConfig} cfg
+     * @returns {Promise<DriveFile>}
+     */
+    upload(file, cfg) {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.client.emit("debug", `[BufftoString] : <Buffer string> size : ${Buffer.from(file).byteLength}byte , nsfw : ${JSON.stringify(cfg.isSensitive)}`);
+            const fd = new FormData();
+            fd.append("i", this.client.token);
+            fd.append("file", new Blob([file]));
+            Object.keys(cfg).forEach(v => {
+                var _a;
+                fd.append(v, (_a = cfg[v]) !== null && _a !== void 0 ? _a : null);
+            });
+            if (cfg.name === null)
+                fd.append("name", (0, createUUID_1.createUuid)());
+            const data = yield this.client.http.POSTFormData("/api/drive/files/create", fd);
+            return data.data;
         });
     }
     CreateNoteFunction(text, body) {
@@ -122,6 +155,7 @@ class Self {
             this.defaultNote.merge({ text: text });
             return this.defaultNote.Object;
         }
+        this.defaultNote.merge({ text: text });
         this.defaultNote.mergeNullValue("visibility", body.visibility, this.client.defaultNoteChannelVisibility);
         this.defaultNote.mergeNullValue("visibleUserIds", body.visibleUserIds, []);
         this.defaultNote.mergeNullValue("cw", body.cw, null);
@@ -134,7 +168,10 @@ class Self {
         this.defaultNote.mergeNullValue("replyId", body.replyId, null);
         this.defaultNote.mergeNullValue("renoteId", body.replyId, null);
         this.defaultNote.mergeNullValue("channelId", body.replyId, null);
-        this.defaultNote.mergeNullObject({ poll: body.poll.toJSON() }, null);
+        this.defaultNote.mergeNullObject({ poll: typeof body.poll !== "undefined" ? body.poll.toJSON() : null }, null);
+        this.defaultNote.mergeNullObject({
+            files: body.files
+        }, null);
         return this.defaultNote.Object;
     }
     getRecommendation(limit, offset) {

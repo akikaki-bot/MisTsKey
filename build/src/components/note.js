@@ -37,7 +37,7 @@ class Note {
         this.uri = note.uri;
         this.url = note.url;
         this.client = client;
-        this.comefrom = typeof note.uri === "undefined" ? client.getHost : note.uri.split("/")[2];
+        this.comefrom = typeof client === "object" && (typeof note.uri === "undefined" ? client.getHost : note.uri.split("/")[2]);
     }
     /**
      * # Reply

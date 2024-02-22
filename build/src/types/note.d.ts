@@ -1,6 +1,7 @@
 import { CreatePoll, Visibility } from "../components";
+import { CreateAttachment } from "../components/attachmentBuilder";
 export type NoteBody = Omit<_NoteBody, "poll"> & {
-    poll: CreatePoll;
+    poll?: CreatePoll;
 };
 export interface _NoteBody {
     /**
@@ -14,6 +15,7 @@ export interface _NoteBody {
         expiresAt: number;
         expiredAfter: number;
     };
+    files?: Array<CreateAttachment>;
     visibility?: Visibility;
     visibleUserIds?: Array<string>;
     text?: string | null;

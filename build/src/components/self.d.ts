@@ -1,7 +1,10 @@
+/// <reference types="node" />
 import { Client } from "../";
 import { Achievement, BadgeRole, Emojis, MeDetailed, Policies, Role } from "../types/me";
 import { NoteBody } from "../types/note";
 import { Note } from "./";
+import { uploadConfig } from "./attachmentBuilder";
+import { DriveFile } from "./driveFile";
 /**
  * ## Self
  * -> implements MeDetailed
@@ -87,6 +90,16 @@ export declare class Self implements MeDetailed {
     private defaultNote;
     constructor(user: MeDetailed, client?: Client);
     note(text: string | null, configs?: NoteBody): Promise<Note>;
+    /**
+     * ### self.upload
+     *
+     * ドライブにアップロードします。
+     *
+     * @param {Buffer} file
+     * @param {uploadConfig} cfg
+     * @returns {Promise<DriveFile>}
+     */
+    upload(file: Buffer, cfg?: uploadConfig): Promise<DriveFile>;
     private CreateNoteFunction;
     getRecommendation(limit?: number, offset?: number): Promise<MeDetailed[]>;
 }
