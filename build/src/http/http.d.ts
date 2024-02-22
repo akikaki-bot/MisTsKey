@@ -38,4 +38,5 @@ export declare class HTTPClient {
      * @returns {Promise<AxiosResponse<R, MisTsKeyError>>}
      */
     GETPOST<T, R>(path: string, data?: T): Promise<AxiosResponse<R, BaseMisTskeyError>>;
+    POSTFormData<T extends FormData, R>(path: string, data?: T): Promise<AxiosResponse<R, BaseMisTskeyError>>;
 }

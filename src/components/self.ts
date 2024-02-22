@@ -13,7 +13,10 @@ import {
 	_NoteBody
 } from "../types/note";
 import { AccessToken } from "../types/reaction";
+import { createUuid } from "../utils/createUUID";
 import { Note, Visibility } from "./";
+import { CreateAttachment, uploadConfig } from "./attachmentBuilder";
+import { DriveFile } from "./driveFile";
 
 /**
  * ## Self
@@ -187,14 +190,27 @@ export class Self implements MeDetailed {
 			replyId : null,
 			renoteId : null,
 			channelId : null,
-			poll : null
+			poll : null,
+			files : [],
 		});
 	}
 
 	async note( text : string | null , configs ?: NoteBody ) : Promise<Note> { 
 
 		const conf = this.CreateNoteFunction(text ,configs);
-		const Response = await this.client.http.GETPOST<_NoteBody & AccessToken, { createdNote : Note }>(
+		if( conf.files.length > 0 ) {
+			const Ids = await Promise.all(
+				conf.files.map( async v => 
+					this.upload( v.toObject().file , v.toObject() )
+				)
+			);
+			delete conf.files;
+			conf.fileIds = Ids.map( v => v.id );
+		}
+
+		this.client.emit("debug" , `[Note] Attachments : ${conf.fileIds.length} isDeletedProperty : ${typeof conf.files}`);
+
+		const Response = await this.client.http.GETPOST<Omit<_NoteBody, "files"> & AccessToken, { createdNote : Note }>(
 			"/api/notes/create",
 			Object.assign(
 				conf,
@@ -203,6 +219,30 @@ export class Self implements MeDetailed {
 		);
 		return new Note(Response.data.createdNote);
 	}
+	
+	/**
+	 * ### self.upload
+	 * 
+	 * ドライブにアップロードします。
+	 * 
+	 * @param {Buffer} file
+	 * @param {uploadConfig} cfg 
+	 * @returns {Promise<DriveFile>}
+	 */
+	async upload( file : Buffer , cfg ?: uploadConfig ) : Promise<DriveFile>{
+		this.client.emit("debug" , `[BufftoString] : <Buffer string> size : ${Buffer.from( file ).byteLength}byte , nsfw : ${JSON.stringify(cfg.isSensitive)}`);
+		
+		const fd = new FormData();
+		fd.append("i" , this.client.token);
+		fd.append("file" , new Blob([ file ]));
+		Object.keys( cfg ).forEach( v => {
+			fd.append( v , cfg[v] ?? null );
+		});
+		if(cfg.name === null ) fd.append("name" , createUuid());
+
+		const data = await this.client.http.POSTFormData<FormData, DriveFile>("/api/drive/files/create" , fd);
+		return data.data;
+	}
 
 	private CreateNoteFunction( text : string , body : NoteBody ) : _NoteBody {
 		
@@ -210,6 +250,8 @@ export class Self implements MeDetailed {
 			this.defaultNote.merge<{ text : string }>({ text : text });
 			return this.defaultNote.Object;
 		}
+
+		this.defaultNote.merge<{ text : string }>({ text : text });
 
 		this.defaultNote.mergeNullValue<{ visibility : Visibility }, "visibility">(
 			"visibility", 
@@ -272,7 +314,14 @@ export class Self implements MeDetailed {
 			null
 		);
 		this.defaultNote.mergeNullObject<{ poll : { choices : Array<string>, multiple : boolean, expiresAt : number, expiredAfter : number }  }>(
-			{ poll : body.poll.toJSON() }, 
+			{ poll : typeof body.poll !== "undefined" ? body.poll.toJSON() : null }, 
+			null
+		);
+
+		this.defaultNote.mergeNullObject<{ files : Array<CreateAttachment> }>(
+			{ 
+				files : body.files
+			},
 			null
 		);
 

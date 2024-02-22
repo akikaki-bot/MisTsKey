@@ -45,6 +45,7 @@ class HTTPClient {
             const url = new URL(`${this.baseUrl}${path}`).toString();
             return axios_1.default.post(url, data)
                 .catch((error) => {
+                console.log(error);
                 const Message = error.response.data.error;
                 throw new __1.MisTsKeyError(Message);
             });
@@ -70,6 +71,38 @@ class HTTPClient {
             return axios_1.default.post(url, data)
                 .catch((error) => {
                 const Message = error.response.data.error;
+                if (typeof Message !== "object")
+                    throw new __1.MisTsKeyError({
+                        message: "Object Parsing Error",
+                        code: "MisTsKeyError",
+                        id: "Unknown",
+                        kind: "Unknown",
+                        info: {
+                            param: "HTTPClient",
+                            reason: "Client Error"
+                        }
+                    });
+                throw new __1.MisTsKeyError(Message);
+            });
+        });
+    }
+    POSTFormData(path, data) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const url = new URL(`${this.baseUrl}${path}`).toString();
+            return axios_1.default.post(url, data)
+                .catch((error) => {
+                const Message = error.response.data.error;
+                if (typeof Message !== "object")
+                    throw new __1.MisTsKeyError({
+                        message: "Object Parsing Error",
+                        code: "MisTsKeyError",
+                        id: "Unknown",
+                        kind: "Unknown",
+                        info: {
+                            param: "HTTPClient",
+                            reason: "Client Error"
+                        }
+                    });
                 throw new __1.MisTsKeyError(Message);
             });
         });

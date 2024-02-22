@@ -35,6 +35,7 @@ export class HTTPClient {
 		const url = new URL(`${this.baseUrl}${path}`).toString();
 		return axios.post<T>(url, data)
 			.catch((error) => {
+				console.log(error);
 				const Message = error.response.data.error;
 				throw new MisTsKeyError(Message);
 			});
@@ -59,6 +60,35 @@ export class HTTPClient {
 		return axios.post<T, AxiosResponse<R, BaseMisTskeyError>>(url, data)
 			.catch((error) => {
 				const Message = error.response.data.error;
+				if( typeof Message !== "object") throw new MisTsKeyError({
+					message : "Object Parsing Error",
+					code : "MisTsKeyError",
+					id : "Unknown",
+					kind : "Unknown",
+					info : {
+						param : "HTTPClient",
+						reason : "Client Error"
+					}
+				});
+				throw new MisTsKeyError(Message);
+			});
+	}
+
+	async POSTFormData<T extends FormData , R>( path : string , data ?: T): Promise<AxiosResponse<R, BaseMisTskeyError>> {
+		const url = new URL(`${this.baseUrl}${path}`).toString();
+		return axios.post<T, AxiosResponse<R, BaseMisTskeyError>>(url, data)
+			.catch((error) => {
+				const Message = error.response.data.error;
+				if( typeof Message !== "object") throw new MisTsKeyError({
+					message : "Object Parsing Error",
+					code : "MisTsKeyError",
+					id : "Unknown",
+					kind : "Unknown",
+					info : {
+						param : "HTTPClient",
+						reason : "Client Error"
+					}
+				});
 				throw new MisTsKeyError(Message);
 			});
 	}
