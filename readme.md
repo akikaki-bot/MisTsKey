@@ -8,6 +8,9 @@
 
 Misskey.io等、Misskey系統SNS API専用APIラッパーです。
 
+## Documentation
+[https://mistsdocs.akikaki.net](https://mistsdocs.akikaki.net)
+
 ## Install
 
 ```
